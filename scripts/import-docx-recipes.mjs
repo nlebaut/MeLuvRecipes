@@ -81,13 +81,19 @@ function parseParagraphFragments(paragraphXml) {
   const runs = paragraphXml.match(/<w:r[\s\S]*?<\/w:r>/g) ?? [];
   let currentKind = "body";
   let currentText = "";
+  let currentSegments = [];
 
   const flush = () => {
     const cleaned = cleanParagraph(currentText);
     if (cleaned) {
-      fragments.push(cleaned);
+      fragments.push({
+        kind: currentKind,
+        text: cleaned,
+        segments: currentKind === "body" ? currentSegments : null,
+      });
     }
     currentText = "";
+    currentSegments = [];
   };
 
   for (const runXml of runs) {
@@ -109,6 +115,13 @@ function parseParagraphFragments(paragraphXml) {
     if (runKind !== currentKind) {
       flush();
       currentKind = runKind;
+    }
+
+    if (runKind === "body") {
+      currentSegments.push({
+        text: decodeXmlEntities(texts),
+        bold: isBoldRun(runXml),
+      });
     }
 
     currentText += texts;
@@ -138,8 +151,8 @@ function isMetadataLine(value) {
 }
 
 function isRecipeTitle(paragraphs, index) {
-  const current = paragraphs[index];
-  const next = paragraphs[index + 1];
+  const current = paragraphs[index]?.text;
+  const next = paragraphs[index + 1]?.text;
 
   return Boolean(
     current &&
@@ -156,7 +169,7 @@ function parseDocxParagraphs(xml) {
 
   for (const paragraphXml of paragraphMatches) {
     for (const fragment of parseParagraphFragments(paragraphXml)) {
-      if (fragment) {
+      if (fragment?.text) {
         paragraphs.push(fragment);
       }
     }
@@ -178,25 +191,28 @@ function splitRecipes(paragraphs) {
     const metadataCandidates = [];
     let cursor = index + 1;
 
-    while (cursor < paragraphs.length && isMetadataLine(paragraphs[cursor])) {
+    while (cursor < paragraphs.length && isMetadataLine(paragraphs[cursor].text)) {
       metadataCandidates.push(paragraphs[cursor]);
       cursor += 1;
     }
 
-    const metadataLine = [...metadataCandidates].sort((left, right) => left.length - right.length)[0];
+    const metadataLine = [...metadataCandidates].sort((left, right) => left.text.length - right.text.length)[0];
     if (!metadataLine) {
       continue;
     }
 
     for (const candidate of metadataCandidates) {
-      if (candidate.length === metadataLine.length) {
+      if (candidate.text.length === metadataLine.text.length) {
         continue;
       }
 
-      if (candidate.startsWith(metadataLine)) {
-        const remainder = candidate.slice(metadataLine.length).trim();
+      if (candidate.text.startsWith(metadataLine.text)) {
+        const remainder = candidate.text.slice(metadataLine.text.length).trim();
         if (remainder) {
-          bodyParagraphs.push(remainder);
+          bodyParagraphs.push({
+            text: remainder,
+            segments: [{ text: remainder, bold: false }],
+          });
         }
       }
     }
@@ -206,7 +222,7 @@ function splitRecipes(paragraphs) {
         break;
       }
 
-      if (!isMetadataLine(paragraphs[cursor])) {
+      if (!isMetadataLine(paragraphs[cursor].text)) {
         bodyParagraphs.push(paragraphs[cursor]);
       }
 
@@ -214,15 +230,126 @@ function splitRecipes(paragraphs) {
     }
 
     recipes.push({
-      title,
-      metadataLine,
-      body: bodyParagraphs.join("\n\n").trim(),
+      title: title.text,
+      metadataLine: metadataLine.text,
+      bodyParagraphs,
     });
 
     index = cursor - 1;
   }
 
   return recipes;
+}
+
+function splitAffixes(value) {
+  const match = value.match(/^(\s*)(.*?)([\s,.;:]*)$/s);
+  return {
+    leading: match?.[1] ?? "",
+    core: match?.[2] ?? value,
+    trailing: match?.[3] ?? "",
+  };
+}
+
+function normalizeIngredientName(value) {
+  return value
+    .trim()
+    .replace(/^(?:la|le|les|du|de la|de l'|d'|des|un|une)\s+/i, "")
+    .trim();
+}
+
+function isSimpleIngredientSpan(value) {
+  const normalized = value.trim();
+  return Boolean(
+    normalized &&
+      !/[.!?]/.test(normalized) &&
+      !/\bavec\b/i.test(normalized) &&
+      !/\bet\b.+\bet\b/i.test(normalized),
+  );
+}
+
+function formatIngredientRef(name, quantity = null, unit = null) {
+  const normalizedName = normalizeIngredientName(name);
+  if (!normalizedName) {
+    return null;
+  }
+
+  if (quantity && unit) {
+    return normalizedName.includes(" ")
+      ? `@${normalizedName}{${quantity}%${unit}}`
+      : `@${normalizedName}{${quantity}%${unit}}`;
+  }
+
+  if (quantity) {
+    return normalizedName.includes(" ")
+      ? `@${normalizedName}{${quantity}}`
+      : `@${normalizedName}{${quantity}}`;
+  }
+
+  return normalizedName.includes(" ") ? `@${normalizedName}{}` : `@${normalizedName}`;
+}
+
+function hasExtraQuantity(value) {
+  return /\b\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*[A-Za-zÀ-ÿŒœÆæ]+)?\b/u.test(value);
+}
+
+function convertBoldSegmentToCooklang(value, nextText = "") {
+  const { leading, core, trailing } = splitAffixes(value);
+  const normalized = core.trim();
+  if (!isSimpleIngredientSpan(normalized) || /^\s*sous\b/i.test(nextText)) {
+    return value;
+  }
+
+  let match = normalized.match(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([A-Za-zÀ-ÿŒœÆæ]+)\s+de\s+(.+)$/u);
+  if (match) {
+    if (hasExtraQuantity(match[3])) {
+      return value;
+    }
+    const rendered = formatIngredientRef(match[3], match[1], match[2]);
+    return rendered ? `${leading}${rendered}${trailing}` : value;
+  }
+
+  match = normalized.match(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*d['’](.+)$/u);
+  if (match) {
+    if (hasExtraQuantity(match[2])) {
+      return value;
+    }
+    const rendered = formatIngredientRef(match[2], match[1]);
+    return rendered ? `${leading}${rendered}${trailing}` : value;
+  }
+
+  match = normalized.match(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s+(.+)$/u);
+  if (match) {
+    if (hasExtraQuantity(match[2])) {
+      return value;
+    }
+    const rendered = formatIngredientRef(match[2], match[1]);
+    return rendered ? `${leading}${rendered}${trailing}` : value;
+  }
+
+  const rendered = formatIngredientRef(normalized);
+  return rendered ? `${leading}${rendered}${trailing}` : value;
+}
+
+function renderBodyParagraph(paragraph) {
+  if (!paragraph.segments?.length) {
+    return paragraph.text;
+  }
+
+  return paragraph.segments
+    .map((segment, index) => (
+      segment.bold
+        ? convertBoldSegmentToCooklang(segment.text, paragraph.segments[index + 1]?.text ?? "")
+        : segment.text
+    ))
+    .join("")
+    .replace(/\u00a0/g, " ")
+    .replace(/\u202f/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function renderCooklangBody(recipe) {
+  return recipe.bodyParagraphs.map(renderBodyParagraph).filter(Boolean).join("\n\n");
 }
 
 function parseServingsText(metadataLine) {
@@ -366,7 +493,7 @@ async function main() {
     }
     usedFileNames.add(fileName);
 
-    const output = `${buildFrontmatter(recipe)}${recipe.body}\n`;
+    const output = `${buildFrontmatter(recipe)}${renderCooklangBody(recipe)}\n`;
     await fs.writeFile(new URL(fileName, recipesDir), output, "utf8");
   }
 
