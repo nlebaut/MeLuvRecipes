@@ -19,16 +19,13 @@ jobs:
 
       - name: Install Cook CLI
         run: |
-          wget https://github.com/cooklang/cook-cli/releases/latest/download/cook-x86_64-unknown-linux-gnu.tar.gz
+          wget https://github.com/cooklang/cookcli/releases/latest/download/cook-x86_64-unknown-linux-gnu.tar.gz
           tar -xzf cook-x86_64-unknown-linux-gnu.tar.gz
           sudo mv cook /usr/local/bin/
 
       - name: Build Website
         run: |
           mkdir out
-          cook server --output out --static
-          # or simply: cook recipe read recipes/*.cook --output out
-          # Actually, the standard way is:
           cook server recipes/ --output out --static
 
       - name: Upload artifact
