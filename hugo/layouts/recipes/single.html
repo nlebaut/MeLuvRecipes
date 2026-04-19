@@ -10,7 +10,6 @@
       <p class="recipe-card-meta">{{ partial "recipe-meta.html" $recipe.metadata }}</p>
       <div class="header-actions">
         <a class="button-link" href="{{ "recipes/" | relURL }}">Retour à l'index</a>
-        <a class="button-link" href="{{ printf "cook/%s" $recipe.fileName | relURL }}">Ouvrir le fichier .cook</a>
       </div>
     </header>
 

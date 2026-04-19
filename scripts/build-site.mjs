@@ -120,7 +120,6 @@ async function resetGeneratedInputs() {
 
   await fs.mkdir(generatedDataDir, { recursive: true });
   await fs.mkdir(generatedContentDir, { recursive: true });
-  await fs.mkdir(generatedStaticCookDir, { recursive: true });
 
   const legacyEntries = await fs.readdir(legacyRecipeSectionDir, { withFileTypes: true }).catch(() => []);
   for (const entry of legacyEntries) {
@@ -169,7 +168,6 @@ async function main() {
     const metadata = extractMetadata(map);
     const recipe = {
       slug,
-      fileName: entry.name,
       title,
       metadata,
       ingredients: (parsed.ingredients ?? []).map((ingredient) => ({
@@ -187,7 +185,6 @@ async function main() {
     recipes.push({
       slug,
       url: `recipes/${slug}/`,
-      fileName: entry.name,
       title,
       summary,
       metadata,
@@ -215,7 +212,6 @@ async function main() {
       markdownFrontmatter(recipe),
       "utf8",
     );
-    await fs.copyFile(filePath, new URL(entry.name, generatedStaticCookDir));
   }
 
   recipes.sort((left, right) => left.title.localeCompare(right.title, "fr", { sensitivity: "base" }));
