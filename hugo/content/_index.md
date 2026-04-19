@@ -1,3 +1,3 @@
 ---
-title: "Croq'actus Cooklang"
+title: "MeLuv Recipes"
 ---

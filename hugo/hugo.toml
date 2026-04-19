@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "fr-fr"
-title = "Croq'actus Cooklang"
+title = "MeLuv Recipes"
 defaultContentLanguage = "fr"
 disableKinds = ["taxonomy", "term", "RSS", "sitemap"]
 relativeURLs = true

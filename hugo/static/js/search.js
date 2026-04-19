@@ -27,12 +27,16 @@ if (root) {
     results.innerHTML = matches
       .slice(0, 8)
       .map(
-        (recipe) => `
-          <a class="search-hit" href="${new URL(recipe.url ?? `recipes/${recipe.slug}/`, siteRootUrl).pathname}">
+        (recipe) => {
+          const recipePath = (recipe.url ?? `recipes/${recipe.slug}/`).replace(/^\/+/, "");
+
+          return `
+          <a class="search-hit" href="${new URL(recipePath, siteRootUrl).pathname}">
             <span class="search-hit-title">${recipe.title}</span>
             <span class="search-hit-meta">${recipe.metadata?.servingsText || recipe.metadata?.servings || ""}</span>
           </a>
-        `,
+        `;
+        },
       )
       .join("");
   };

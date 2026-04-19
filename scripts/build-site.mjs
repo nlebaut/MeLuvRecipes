@@ -186,7 +186,7 @@ async function main() {
 
     recipes.push({
       slug,
-      url: `/recipes/${slug}/`,
+      url: `recipes/${slug}/`,
       fileName: entry.name,
       title,
       summary,
