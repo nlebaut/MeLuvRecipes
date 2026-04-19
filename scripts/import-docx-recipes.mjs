@@ -254,6 +254,11 @@ function normalizeIngredientName(value) {
   return value
     .trim()
     .replace(/^(?:la|le|les|du|de la|de l'|d'|des|un|une)\s+/i, "")
+    .replace(/^(?:beau|bel|belle|beaux|belles|gros|grosse|grosses|grand|grande|grandes|petit|petite|petites|quelques|fine|fines)\s+/i, "")
+    .replace(/\s+du panier\b.*$/i, "")
+    .replace(/\s+\((?:[^)(]+|\([^)(]*\))*\)\s*$/u, "")
+    .replace(/\s+(?:haché|hachée|hachés|hachées|ciselé|ciselée|ciselés|ciselées|coupé|coupée|coupés|coupées|rincé|rincée|rincés|rincées|lavé|lavée|lavés|lavées|égoutté|égouttée|égouttés|égouttées|émietté|émiettée|émiettés|émiettées|concassé|concassée|concassés|concassées|grillé|grillée|grillés|grillées|pelé|pelée|pelés|pelées|frais|fraîche|frais|fraîches)\b.*$/i, "")
+    .replace(/^(?:de|d')\s+/i, "")
     .trim();
 }
 
@@ -262,6 +267,7 @@ function isSimpleIngredientSpan(value) {
   return Boolean(
     normalized &&
       !/[.!?]/.test(normalized) &&
+      !/,/.test(normalized) &&
       !/\bavec\b/i.test(normalized) &&
       !/\bet\b.+\bet\b/i.test(normalized),
   );
@@ -288,6 +294,65 @@ function formatIngredientRef(name, quantity = null, unit = null) {
   return normalizedName.includes(" ") ? `@${normalizedName}{}` : `@${normalizedName}`;
 }
 
+function renderPlainIngredient(name, quantity = null, unit = null) {
+  if (quantity && unit) {
+    return `${quantity} ${unit} de ${name}`;
+  }
+
+  if (quantity) {
+    return `${quantity} ${name}`;
+  }
+
+  return name;
+}
+
+function normalizeIngredientToken(name, quantity = null, unit = null) {
+  const cleanedName = normalizeIngredientName(name);
+  if (!cleanedName) {
+    return null;
+  }
+
+  if (
+    /\b(?:ou|de votre choix|selon|facultatif|optionnel|optionnellement)\b/i.test(cleanedName) ||
+    /^(?:préparer|mélanger|couper|ajouter|faire|rincer|laver|égoutter|parsemer|servir)\b/i.test(cleanedName) ||
+    /,/.test(cleanedName)
+  ) {
+    return { plain: renderPlainIngredient(cleanedName, quantity, unit) };
+  }
+
+  const unitFromNameMatch = cleanedName.match(/^(càs|cas|càc|cac|verre|verres|boule|boules|gousse|gousses|tranche|tranches|filet|filets|dos|pavé|pavés|poignée|poignées|pincée|pincées|bouquet|bouquets|blanc|blancs|bloc|blocs|bûche|buche|bûches|buches|rouleau|rouleaux|feuille|feuilles|sachet|sachets|barquette|barquettes|paquet|paquets|cube|cubes|part|parts|portion|portions|galette|galettes|escalope|escalopes|steak|steaks|filet|filets|oeuf|oeufs)\s+d['e]\s+(.+)$/iu);
+  if (unitFromNameMatch && quantity) {
+    return {
+      name: normalizeIngredientName(unitFromNameMatch[2]),
+      quantity,
+      unit: unitFromNameMatch[1],
+    };
+  }
+
+  if (/^(?:càs|cas|càc|cac|g|kg|ml|cl|l)\b/i.test(cleanedName)) {
+    return { plain: renderPlainIngredient(cleanedName, quantity, unit) };
+  }
+
+  return {
+    name: cleanedName,
+    quantity,
+    unit,
+  };
+}
+
+function renderNormalizedIngredient(name, quantity = null, unit = null) {
+  const normalized = normalizeIngredientToken(name, quantity, unit);
+  if (!normalized) {
+    return renderPlainIngredient(name, quantity, unit);
+  }
+
+  if (normalized.plain) {
+    return normalized.plain;
+  }
+
+  return formatIngredientRef(normalized.name, normalized.quantity, normalized.unit);
+}
+
 function hasExtraQuantity(value) {
   return /\b\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*[A-Za-zÀ-ÿŒœÆæ]+)?\b/u.test(value);
 }
@@ -295,16 +360,21 @@ function hasExtraQuantity(value) {
 function convertBoldSegmentToCooklang(value, nextText = "") {
   const { leading, core, trailing } = splitAffixes(value);
   const normalized = core.trim();
-  if (!isSimpleIngredientSpan(normalized) || /^\s*sous\b/i.test(nextText)) {
+  if (
+    !isSimpleIngredientSpan(normalized) ||
+    /^\s*sous\b/i.test(nextText) ||
+    /\b(?:ou|de votre choix|selon|facultatif|optionnel|optionnellement)\b/i.test(normalized) ||
+    /^(?:préparer|mélanger|couper|ajouter|faire|rincer|laver|égoutter|parsemer|servir)\b/i.test(normalized)
+  ) {
     return value;
   }
 
-  let match = normalized.match(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([A-Za-zÀ-ÿŒœÆæ]+)\s+de\s+(.+)$/u);
+  let match = normalized.match(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:(?:beau|bel|belle|beaux|belles|gros|grosse|grand|grande|petit|petite)\s+)?(càs|cas|càc|cac|g|kg|ml|cl|l|verre|verres|boule|boules|gousse|gousses|tranche|tranches|filet|filets|dos|pavé|pavés|poignée|poignées|pincée|pincées|bouquet|bouquets|blanc|blancs|bloc|blocs|bûche|buche|bûches|buches|rouleau|rouleaux|feuille|feuilles|sachet|sachets|barquette|barquettes|paquet|paquets|cube|cubes|part|parts|portion|portions|galette|galettes|escalope|escalopes|steak|steaks)\s+de\s+(.+)$/iu);
   if (match) {
     if (hasExtraQuantity(match[3])) {
       return value;
     }
-    const rendered = formatIngredientRef(match[3], match[1], match[2]);
+    const rendered = renderNormalizedIngredient(match[3], match[1], match[2]);
     return rendered ? `${leading}${rendered}${trailing}` : value;
   }
 
@@ -313,7 +383,7 @@ function convertBoldSegmentToCooklang(value, nextText = "") {
     if (hasExtraQuantity(match[2])) {
       return value;
     }
-    const rendered = formatIngredientRef(match[2], match[1]);
+    const rendered = renderNormalizedIngredient(match[2], match[1]);
     return rendered ? `${leading}${rendered}${trailing}` : value;
   }
 
@@ -322,11 +392,11 @@ function convertBoldSegmentToCooklang(value, nextText = "") {
     if (hasExtraQuantity(match[2])) {
       return value;
     }
-    const rendered = formatIngredientRef(match[2], match[1]);
+    const rendered = renderNormalizedIngredient(match[2], match[1]);
     return rendered ? `${leading}${rendered}${trailing}` : value;
   }
 
-  const rendered = formatIngredientRef(normalized);
+  const rendered = renderNormalizedIngredient(normalized);
   return rendered ? `${leading}${rendered}${trailing}` : value;
 }
 
