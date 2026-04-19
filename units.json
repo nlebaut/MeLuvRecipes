@@ -1,0 +1,11 @@
+{
+  "units": {
+    "g": "gram",
+    "kg": "kilogram",
+    "ml": "milliliter",
+    "cl": "centiliter",
+    "l": "liter",
+    "cas": "tablespoon",
+    "cac": "teaspoon"
+  }
+}

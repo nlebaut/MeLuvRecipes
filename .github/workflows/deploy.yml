@@ -1,0 +1,48 @@
+name: Build and Deploy Cooklang Website
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Cook CLI
+        run: |
+          wget https://github.com/cooklang/cook-cli/releases/latest/download/cook-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf cook-x86_64-unknown-linux-gnu.tar.gz
+          sudo mv cook /usr/local/bin/
+
+      - name: Build Website
+        run: |
+          mkdir out
+          cook server --output out --static
+          # or simply: cook recipe read recipes/*.cook --output out
+          # Actually, the standard way is:
+          cook server recipes/ --output out --static
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
