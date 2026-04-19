@@ -30,6 +30,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.160.1"
+
       - name: Install CookCLI
         run: |
           curl -fsSL -o cook.tar.gz https://github.com/cooklang/cookcli/releases/download/v0.29.0/cook-x86_64-unknown-linux-gnu.tar.gz
@@ -47,12 +52,12 @@ jobs:
 
       - name: Build static site
         run: |
-          node scripts/build-site.mjs
+          node scripts/build-site.mjs docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: docs
 
   deploy:
     needs: build

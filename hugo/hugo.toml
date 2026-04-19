@@ -1,0 +1,11 @@
+baseURL = "/"
+languageCode = "fr-fr"
+title = "Croq'actus Cooklang"
+defaultContentLanguage = "fr"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap"]
+relativeURLs = true
+canonifyURLs = false
+
+[params]
+tagline = "Recettes Cooklang publiées en HTML statique avec Hugo et GitHub Pages."
+description = "Collection de recettes Cooklang avec une page statique par recette."

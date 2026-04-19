@@ -11,6 +11,9 @@ build/
 dist/
 out/
 _site/
+hugo/data/recipes/
+hugo/content/generated-recipes/
+hugo/static/cook/
 
 # Misc
 .DS_Store

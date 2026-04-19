@@ -1,0 +1,21 @@
+{{ define "main" }}
+  {{ $catalog := site.Data.recipes.catalog }}
+  <section class="panel">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Bibliothèque</p>
+        <h2>{{ $catalog.count }} recettes</h2>
+      </div>
+      <a class="button-link" href="{{ "recipes/" | relURL }}">Parcourir l'index complet</a>
+    </div>
+    <div class="recipe-grid">
+      {{ range first 18 $catalog.recipes }}
+        <article class="recipe-card">
+          <p class="recipe-card-meta">{{ partial "recipe-meta.html" .metadata }}</p>
+          <h3><a href="{{ printf "recipes/%s/" .slug | relURL }}">{{ .title }}</a></h3>
+          <p>{{ .summary | truncate 280 }}</p>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

@@ -1,0 +1,20 @@
+{{- $parts := slice -}}
+{{- if or .servingsText .servings -}}
+  {{- $display := printf "%v" (or .servingsText .servings) -}}
+  {{- $canonical := printf "%v" .servings -}}
+  {{- if eq $display $canonical -}}
+    {{- $parts = $parts | append (printf "%s portions" $display) -}}
+  {{- else -}}
+    {{- $parts = $parts | append $display -}}
+  {{- end -}}
+{{- end -}}
+{{- if or .prepTimeText .prepTime -}}
+  {{- $parts = $parts | append (printf "Prep %s" (or .prepTimeText .prepTime)) -}}
+{{- end -}}
+{{- if or .cookTimeText .cookTime -}}
+  {{- $parts = $parts | append (printf "Cuisson %s" (or .cookTimeText .cookTime)) -}}
+{{- end -}}
+{{- if or .timeText .time -}}
+  {{- $parts = $parts | append (printf "Total %s" (or .timeText .time)) -}}
+{{- end -}}
+{{ delimit $parts " • " }}

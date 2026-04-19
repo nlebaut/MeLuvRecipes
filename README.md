@@ -5,9 +5,9 @@ Ce dépôt contient les recettes de Croq'actus au format [Cooklang](https://cook
 ## Structure
 
 - `recipes/` : Contient toutes les recettes au format `.cook`.
-- `site/` : Interface statique servie par GitHub Pages.
+- `hugo/` : Projet Hugo utilisé pour générer le site statique.
 - `scripts/migrate-recipes-frontmatter.mjs` : Convertit l'ancien format `>> key: value` vers le frontmatter YAML actuel.
-- `scripts/build-site.mjs` : Génère un site statique dans `dist/` ou `docs/` à partir des `.cook` via `cook recipe --format json`.
+- `scripts/build-site.mjs` : Génère les données Hugo depuis les `.cook`, puis construit le site dans `docs/` ou `dist/`.
 - `docs/` : Version statique commitée pour GitHub Pages en mode "Deploy from a branch".
 - `.github/workflows/deploy.yml` : Gère la validation et le déploiement automatique sur GitHub Pages.
 
@@ -18,10 +18,16 @@ GitHub Pages ne peut pas exécuter `cook server` comme un processus permanent : 
 Le dépôt est donc construit ainsi :
 
 1. Les recettes `.cook` sont validées avec CookCLI pendant la CI.
-2. Un build statique génère une API JSON et copie les fichiers `.cook` bruts dans `dist/`.
-3. GitHub Pages publie `dist/`, qui contient une interface web consultable dans le navigateur.
+2. Un build génère des fichiers JSON par recette pour Hugo ainsi que des pages statiques.
+3. GitHub Pages publie `docs/`, qui contient une page HTML par recette.
 
 Le dépôt contient aussi `docs/` pour rester compatible avec le mode GitHub Pages "Deploy from a branch". Dans ce cas, configurez Pages sur `main` + `/docs`.
+
+Si vous voulez que **chaque nouveau fichier `.cook` poussé sur `main`** soit automatiquement pris en compte par le site sans regénérer `docs/` à la main, configurez GitHub Pages avec :
+
+- `Source: GitHub Actions`
+
+Le workflow du dépôt installe CookCLI et Hugo, rebâtit le site à chaque push sur `main`, puis publie le résultat sur GitHub Pages.
 
 ## Comment ajouter une recette
 
@@ -51,6 +57,12 @@ Pour regénérer la version commitée pour Pages en mode branche :
 
 ```bash
 node scripts/build-site.mjs docs
+```
+
+Prérequis locaux :
+
+```bash
+brew install hugo
 ```
 
 Pour lancer l'interface web embarquée de CookCLI sur votre machine :

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ with .Summary }}{{ . | plainify }}{{ else }}{{ site.Params.description }}{{ end }}">
+    <link rel="stylesheet" href="{{ "css/site.css" | relURL }}">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <p class="hero-kicker">Cooklang on GitHub Pages</p>
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">Collection statique</p>
+            <h1>{{ site.Title }}</h1>
+          </div>
+          <nav class="hero-nav">
+            <a href="{{ "" | relURL }}">Accueil</a>
+            <a href="{{ "recipes/" | relURL }}">Toutes les recettes</a>
+          </nav>
+        </div>
+        <p class="hero-copy">{{ site.Params.tagline }}</p>
+      </header>
+      <main>
+        {{ block "main" . }}{{ end }}
+      </main>
+    </div>
+  </body>
+</html>
