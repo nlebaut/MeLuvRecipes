@@ -1,0 +1,33 @@
+{
+  "slug": "wrap-apero-froid-facile",
+  "fileName": "wrap_apero_froid_facile.cook",
+  "title": "Wrap apéro froid facile",
+  "metadata": {
+    "title": "Wrap apéro froid facile",
+    "servings": 4,
+    "servingsText": "4",
+    "prepTime": "15 min",
+    "prepTimeText": null,
+    "cookTime": null,
+    "cookTimeText": null,
+    "time": null,
+    "timeText": null
+  },
+  "ingredients": [],
+  "cookware": [],
+  "timers": [],
+  "sections": [
+    {
+      "name": null,
+      "steps": [
+        {
+          "number": 1,
+          "text": "Étaler des galettes de tortilla (quantité selon convenance) et les tartiner de fromage frais (ail et fines herbes, noix et figue, nature). Disposer des tranches de jambon ou de saumon fumé ou du thon égoutté en laissant un emplacement vide sur le haut de la galette. Ajouter quelques feuilles de salade rincée. Rouler les wraps de façon bien serré en faisant pression avec les doigts. Découper les rouleaux en tranches. Les disposer sur une assiette et garder au frais jusqu'au moment de déguster."
+        }
+      ]
+    }
+  ],
+  "rawSource": "---\ntitle: \"Wrap apéro froid facile\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"15 min\"\n---\n\nÉtaler des galettes de tortilla (quantité selon convenance) et les tartiner de fromage frais (ail et fines herbes, noix et figue, nature). Disposer des tranches de jambon ou de saumon fumé ou du thon égoutté en laissant un emplacement vide sur le haut de la galette. Ajouter quelques feuilles de salade rincée. Rouler les wraps de façon bien serré en faisant pression avec les doigts. Découper les rouleaux en tranches. Les disposer sur une assiette et garder au frais jusqu'au moment de déguster.\n",
+  "summary": "Étaler des galettes de tortilla (quantité selon convenance) et les tartiner de fromage frais (ail et fines herbes, noix et figue, nature). Disposer des tranches de jambon ou de saumon fumé ou du thon égoutté en laissant un emplacement vide sur le haut de la galette. Ajouter quelques feuilles de salade rincée. Rouler les wraps de façon bien serré en faisant pression avec les doigts. Découper les rouleaux en tranches. Les disposer sur une assiette et garder au frais jusqu'au moment de déguster.",
+  "searchText": "Wrap apéro froid facile ---\ntitle: \"Wrap apéro froid facile\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"15 min\"\n---\n\nÉtaler des galettes de tortilla (quantité selon convenance) et les tartiner de fromage frais (ail et fines herbes, noix et figue, nature). Disposer des tranches de jambon ou de saumon fumé ou du thon égoutté en laissant un emplacement vide sur le haut de la galette. Ajouter quelques feuilles de salade rincée. Rouler les wraps de façon bien serré en faisant pression avec les doigts. Découper les rouleaux en tranches. Les disposer sur une assiette et garder au frais jusqu'au moment de déguster.\n 4 15 min"
+}

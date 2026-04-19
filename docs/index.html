@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Croq'actus Cooklang</title>
+    <meta
+      name="description"
+      content="Collection de recettes Cooklang publiée sur GitHub Pages avec une interface statique générée à partir des fichiers .cook."
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <p class="hero-kicker">Cooklang on GitHub Pages</p>
+        <h1>Croq'actus</h1>
+        <p class="hero-copy">
+          Une bibliothèque de recettes Cooklang publiée en statique. La collection est générée par
+          `cook` pendant la CI, puis servie par GitHub Pages.
+        </p>
+      </header>
+
+      <main class="layout">
+        <aside class="catalog-panel">
+          <label class="search-label" for="recipe-search">Chercher une recette</label>
+          <input id="recipe-search" type="search" placeholder="Titre, durée, texte libre">
+          <p id="recipe-count" class="catalog-count"></p>
+          <div id="recipe-list" class="recipe-list" aria-live="polite"></div>
+        </aside>
+
+        <section id="recipe-view" class="recipe-panel">
+          <div class="placeholder-card">
+            <p class="eyebrow">Collection statique</p>
+            <h2>Sélectionnez une recette</h2>
+            <p>
+              Le site expose aussi les fichiers `.cook` bruts, ce qui permet d’utiliser GitHub Pages
+              comme publication statique tout en conservant les sources Cooklang.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

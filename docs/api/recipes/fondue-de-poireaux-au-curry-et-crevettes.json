@@ -1,0 +1,33 @@
+{
+  "slug": "fondue-de-poireaux-au-curry-et-crevettes",
+  "fileName": "fondue_de_poireaux_au_curry_et_crevettes.cook",
+  "title": "Fondue de poireaux au curry et crevettes",
+  "metadata": {
+    "title": "Fondue de poireaux au curry et crevettes",
+    "servings": 2,
+    "servingsText": "2",
+    "prepTime": "20 min",
+    "prepTimeText": null,
+    "cookTime": "25 min",
+    "cookTimeText": null,
+    "time": null,
+    "timeText": null
+  },
+  "ingredients": [],
+  "cookware": [],
+  "timers": [],
+  "sections": [
+    {
+      "name": null,
+      "steps": [
+        {
+          "number": 1,
+          "text": "Eplucher et émincer 1 oignon. Laver et émincer 2 poireaux. Faire revenir l'oignon et les poireaux émincés dans un peu d'huile d'olive. Ajouter 300 g de crevettes cuites décortiguées, 1 càc de curry, du sel et du poivre. Bien faire revenir. Ajouter 25 ml de crème liquide et laisser mijoter à feux doux. Servir avec du riz ou des pâtes."
+        }
+      ]
+    }
+  ],
+  "rawSource": "---\ntitle: \"Fondue de poireaux au curry et crevettes\"\nservings: 2\nservings_text: \"2\"\nprep_time: \"20 min\"\ncook_time: \"25 min\"\n---\n\nEplucher et émincer 1 oignon. Laver et émincer 2 poireaux. Faire revenir l'oignon et les poireaux émincés dans un peu d'huile d'olive. Ajouter 300 g de crevettes cuites décortiguées, 1 càc de curry, du sel et du poivre. Bien faire revenir. Ajouter 25 ml de crème liquide et laisser mijoter à feux doux. Servir avec du riz ou des pâtes.\n",
+  "summary": "Eplucher et émincer 1 oignon. Laver et émincer 2 poireaux. Faire revenir l'oignon et les poireaux émincés dans un peu d'huile d'olive. Ajouter 300 g de crevettes cuites décortiguées, 1 càc de curry, du sel et du poivre. Bien faire revenir. Ajouter 25 ml de crème liquide et laisser mijoter à feux doux. Servir avec du riz ou des pâtes.",
+  "searchText": "Fondue de poireaux au curry et crevettes ---\ntitle: \"Fondue de poireaux au curry et crevettes\"\nservings: 2\nservings_text: \"2\"\nprep_time: \"20 min\"\ncook_time: \"25 min\"\n---\n\nEplucher et émincer 1 oignon. Laver et émincer 2 poireaux. Faire revenir l'oignon et les poireaux émincés dans un peu d'huile d'olive. Ajouter 300 g de crevettes cuites décortiguées, 1 càc de curry, du sel et du poivre. Bien faire revenir. Ajouter 25 ml de crème liquide et laisser mijoter à feux doux. Servir avec du riz ou des pâtes.\n 2 20 min 25 min"
+}

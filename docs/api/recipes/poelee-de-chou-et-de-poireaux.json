@@ -1,0 +1,33 @@
+{
+  "slug": "poelee-de-chou-et-de-poireaux",
+  "fileName": "poelee_de_chou_et_de_poireaux.cook",
+  "title": "Poêlée de chou et de poireaux",
+  "metadata": {
+    "title": "Poêlée de chou et de poireaux",
+    "servings": 4,
+    "servingsText": "4",
+    "prepTime": "15 min",
+    "prepTimeText": "15 minutes",
+    "cookTime": "25 min",
+    "cookTimeText": "25 minutes",
+    "time": null,
+    "timeText": null
+  },
+  "ingredients": [],
+  "cookware": [],
+  "timers": [],
+  "sections": [
+    {
+      "name": null,
+      "steps": [
+        {
+          "number": 1,
+          "text": "Laver 2 poireaux et les couper en 2 dans le sens de la longueur. Oter les feuilles vertes pour ne garder que le blanc. Les émincer en petits morceaux avec le chou. Mettre les légumes dans une casserole et arroser d'huile d'olive, saler, poivrer. Faire cuire à feu moyen 10-15 minutes. Ajouter 1 paquet de lardons et 1 càs de crème fraîche. Laisser mijoter à nouveau 10 minutes puis servir."
+        }
+      ]
+    }
+  ],
+  "rawSource": "---\ntitle: \"Poêlée de chou et de poireaux\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"15 min\"\nprep_time_text: \"15 minutes\"\ncook_time: \"25 min\"\ncook_time_text: \"25 minutes\"\n---\n\nLaver 2 poireaux et les couper en 2 dans le sens de la longueur. Oter les feuilles vertes pour ne garder que le blanc. Les émincer en petits morceaux avec le chou. Mettre les légumes dans une casserole et arroser d'huile d'olive, saler, poivrer. Faire cuire à feu moyen 10-15 minutes. Ajouter 1 paquet de lardons et 1 càs de crème fraîche. Laisser mijoter à nouveau 10 minutes puis servir.\n",
+  "summary": "Laver 2 poireaux et les couper en 2 dans le sens de la longueur. Oter les feuilles vertes pour ne garder que le blanc. Les émincer en petits morceaux avec le chou. Mettre les légumes dans une casserole et arroser d'huile d'olive, saler, poivrer. Faire cuire à feu moyen 10-15 minutes. Ajouter 1 paquet de lardons et 1 càs de crème fraîche. Laisser mijoter à nouveau 10 minutes puis servir.",
+  "searchText": "Poêlée de chou et de poireaux ---\ntitle: \"Poêlée de chou et de poireaux\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"15 min\"\nprep_time_text: \"15 minutes\"\ncook_time: \"25 min\"\ncook_time_text: \"25 minutes\"\n---\n\nLaver 2 poireaux et les couper en 2 dans le sens de la longueur. Oter les feuilles vertes pour ne garder que le blanc. Les émincer en petits morceaux avec le chou. Mettre les légumes dans une casserole et arroser d'huile d'olive, saler, poivrer. Faire cuire à feu moyen 10-15 minutes. Ajouter 1 paquet de lardons et 1 càs de crème fraîche. Laisser mijoter à nouveau 10 minutes puis servir.\n 4 15 min 15 minutes 25 min 25 minutes"
+}

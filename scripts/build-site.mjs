@@ -7,7 +7,11 @@ import { fileURLToPath } from "node:url";
 const rootDir = new URL("../", import.meta.url);
 const recipesDir = new URL("../recipes/", import.meta.url);
 const siteDir = new URL("../site/", import.meta.url);
-const distDir = new URL("../dist/", import.meta.url);
+
+function resolveOutputDir() {
+  const outputArg = process.argv[2] ?? "dist";
+  return new URL(`../${outputArg.replace(/\/+$/, "")}/`, import.meta.url);
+}
 
 function slugify(value) {
   return value
@@ -101,11 +105,13 @@ async function copyDir(source, target) {
 }
 
 async function main() {
-  await fs.rm(distDir, { recursive: true, force: true });
-  await fs.mkdir(new URL("./api/recipes/", distDir), { recursive: true });
-  await copyDir(fileURLToPath(siteDir), fileURLToPath(distDir));
-  await copyDir(fileURLToPath(recipesDir), fileURLToPath(new URL("./recipes/", distDir)));
-  await fs.writeFile(new URL("./.nojekyll", distDir), "", "utf8");
+  const outputDir = resolveOutputDir();
+
+  await fs.rm(outputDir, { recursive: true, force: true });
+  await fs.mkdir(new URL("./api/recipes/", outputDir), { recursive: true });
+  await copyDir(fileURLToPath(siteDir), fileURLToPath(outputDir));
+  await copyDir(fileURLToPath(recipesDir), fileURLToPath(new URL("./recipes/", outputDir)));
+  await fs.writeFile(new URL("./.nojekyll", outputDir), "", "utf8");
 
   const entries = await fs.readdir(recipesDir, { withFileTypes: true });
   const recipes = [];
@@ -170,7 +176,7 @@ async function main() {
     });
 
     await fs.writeFile(
-      new URL(`./api/recipes/${slug}.json`, distDir),
+      new URL(`./api/recipes/${slug}.json`, outputDir),
       `${JSON.stringify(recipe, null, 2)}\n`,
       "utf8",
     );
@@ -179,7 +185,7 @@ async function main() {
   recipes.sort((left, right) => left.title.localeCompare(right.title, "fr", { sensitivity: "base" }));
 
   await fs.writeFile(
-    new URL("./api/index.json", distDir),
+    new URL("./api/index.json", outputDir),
     `${JSON.stringify(
       {
         generatedAt: new Date().toISOString(),

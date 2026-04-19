@@ -7,7 +7,8 @@ Ce dépôt contient les recettes de Croq'actus au format [Cooklang](https://cook
 - `recipes/` : Contient toutes les recettes au format `.cook`.
 - `site/` : Interface statique servie par GitHub Pages.
 - `scripts/migrate-recipes-frontmatter.mjs` : Convertit l'ancien format `>> key: value` vers le frontmatter YAML actuel.
-- `scripts/build-site.mjs` : Génère `dist/` à partir des `.cook` via `cook recipe --format json`.
+- `scripts/build-site.mjs` : Génère un site statique dans `dist/` ou `docs/` à partir des `.cook` via `cook recipe --format json`.
+- `docs/` : Version statique commitée pour GitHub Pages en mode "Deploy from a branch".
 - `.github/workflows/deploy.yml` : Gère la validation et le déploiement automatique sur GitHub Pages.
 
 ## Déploiement
@@ -19,6 +20,8 @@ Le dépôt est donc construit ainsi :
 1. Les recettes `.cook` sont validées avec CookCLI pendant la CI.
 2. Un build statique génère une API JSON et copie les fichiers `.cook` bruts dans `dist/`.
 3. GitHub Pages publie `dist/`, qui contient une interface web consultable dans le navigateur.
+
+Le dépôt contient aussi `docs/` pour rester compatible avec le mode GitHub Pages "Deploy from a branch". Dans ce cas, configurez Pages sur `main` + `/docs`.
 
 ## Comment ajouter une recette
 
@@ -42,6 +45,12 @@ Pour regénérer le site statique localement :
 
 ```bash
 node scripts/build-site.mjs
+```
+
+Pour regénérer la version commitée pour Pages en mode branche :
+
+```bash
+node scripts/build-site.mjs docs
 ```
 
 Pour lancer l'interface web embarquée de CookCLI sur votre machine :

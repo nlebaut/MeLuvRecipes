@@ -1,0 +1,33 @@
+{
+  "slug": "radis-marines-et-sauce-cremeuse",
+  "fileName": "radis_marines_et_sauce_cremeuse.cook",
+  "title": "Radis marinés et sauce crémeuse",
+  "metadata": {
+    "title": "Radis marinés et sauce crémeuse",
+    "servings": 4,
+    "servingsText": "4",
+    "prepTime": "25 min",
+    "prepTimeText": null,
+    "cookTime": null,
+    "cookTimeText": null,
+    "time": null,
+    "timeText": null
+  },
+  "ingredients": [],
+  "cookware": [],
+  "timers": [],
+  "sections": [
+    {
+      "name": null,
+      "steps": [
+        {
+          "number": 1,
+          "text": "Rincer les radis d'1 botte, les poser sur une planche et les écraser légèrement d'un petit coup de rouleau à pâtisserie. Mélanger dans un grand bol 2 càs d'huile d'olive avec le jus d'1/2 citron, 1 càc de miel, du sel et du poivre et ajouter les radis. Mélanger et laisser mariner le temps de préparer la sauce. Mixer 1 yaourt grec avec 100g de feta, le jus d'1/2 citron, du sel et du poivre. Servir cette sauce avec les radis marinés."
+        }
+      ]
+    }
+  ],
+  "rawSource": "---\ntitle: \"Radis marinés et sauce crémeuse\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"25 min\"\n---\n\nRincer les radis d'1 botte, les poser sur une planche et les écraser légèrement d'un petit coup de rouleau à pâtisserie. Mélanger dans un grand bol 2 càs d'huile d'olive avec le jus d'1/2 citron, 1 càc de miel, du sel et du poivre et ajouter les radis. Mélanger et laisser mariner le temps de préparer la sauce. Mixer 1 yaourt grec avec 100g de feta, le jus d'1/2 citron, du sel et du poivre. Servir cette sauce avec les radis marinés.\n",
+  "summary": "Rincer les radis d'1 botte, les poser sur une planche et les écraser légèrement d'un petit coup de rouleau à pâtisserie. Mélanger dans un grand bol 2 càs d'huile d'olive avec le jus d'1/2 citron, 1 càc de miel, du sel et du poivre et ajouter les radis. Mélanger et laisser mariner le temps de préparer la sauce. Mixer 1 yaourt grec avec 100g de feta, le jus d'1/2 citron, du sel et du poivre. Servir cette sauce avec les radis marinés.",
+  "searchText": "Radis marinés et sauce crémeuse ---\ntitle: \"Radis marinés et sauce crémeuse\"\nservings: 4\nservings_text: \"4\"\nprep_time: \"25 min\"\n---\n\nRincer les radis d'1 botte, les poser sur une planche et les écraser légèrement d'un petit coup de rouleau à pâtisserie. Mélanger dans un grand bol 2 càs d'huile d'olive avec le jus d'1/2 citron, 1 càc de miel, du sel et du poivre et ajouter les radis. Mélanger et laisser mariner le temps de préparer la sauce. Mixer 1 yaourt grec avec 100g de feta, le jus d'1/2 citron, du sel et du poivre. Servir cette sauce avec les radis marinés.\n 4 25 min"
+}
