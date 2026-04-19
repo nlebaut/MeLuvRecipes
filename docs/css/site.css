@@ -91,6 +91,70 @@ a {
   line-height: 1.6;
 }
 
+.site-search {
+  position: relative;
+  width: min(34rem, 100%);
+  margin-top: 1.5rem;
+}
+
+.search-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  font: inherit;
+  color: var(--text);
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 252, 246, 0.98);
+  box-shadow: var(--shadow);
+}
+
+.search-hit {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.search-hit:hover {
+  background: rgba(255, 248, 242, 0.95);
+}
+
+.search-hit-title {
+  font-weight: 700;
+}
+
+.search-hit-meta,
+.search-empty {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .panel {
   margin-bottom: 1.5rem;
   padding: 1.5rem;

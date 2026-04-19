@@ -22,6 +22,11 @@
           </nav>
         </div>
         <p class="hero-copy">Recettes Cooklang publiées en HTML statique avec Hugo et GitHub Pages.</p>
+        <div class="site-search" data-site-search>
+          <label class="search-label" for="site-search-input">Chercher une recette</label>
+          <input id="site-search-input" class="search-input" type="search" placeholder="Titre, ingrédient, texte libre" autocomplete="off">
+          <div class="search-results" data-search-results hidden></div>
+        </div>
       </header>
       <main>
         
@@ -71,5 +76,6 @@ Eplucher et émincer 300 g d&#39;échalotes et les faire revenir 2 min dans 1 c�
 
       </main>
     </div>
+    <script type="module" src="../../js/search.js"></script>
   </body>
 </html>

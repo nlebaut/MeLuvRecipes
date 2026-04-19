@@ -11,6 +11,7 @@ const generatedDataDir = new URL("../hugo/data/recipes/", import.meta.url);
 const generatedContentDir = new URL("../hugo/content/generated-recipes/", import.meta.url);
 const legacyRecipeSectionDir = new URL("../hugo/content/recipes/", import.meta.url);
 const generatedStaticCookDir = new URL("../hugo/static/cook/", import.meta.url);
+const generatedStaticSearchIndex = new URL("../hugo/static/search.json", import.meta.url);
 
 function resolveOutputDir() {
   const outputArg = process.argv[2] ?? "docs";
@@ -115,6 +116,7 @@ async function resetGeneratedInputs() {
   await fs.rm(generatedDataDir, { recursive: true, force: true });
   await fs.rm(generatedContentDir, { recursive: true, force: true });
   await fs.rm(generatedStaticCookDir, { recursive: true, force: true });
+  await fs.rm(generatedStaticSearchIndex, { force: true });
 
   await fs.mkdir(generatedDataDir, { recursive: true });
   await fs.mkdir(generatedContentDir, { recursive: true });
@@ -184,10 +186,23 @@ async function main() {
 
     recipes.push({
       slug,
+      url: `/recipes/${slug}/`,
       fileName: entry.name,
       title,
       summary,
       metadata,
+      searchText: [
+        title,
+        summary,
+        source,
+        metadata.servingsText,
+        metadata.prepTime,
+        metadata.prepTimeText,
+        metadata.cookTime,
+        metadata.cookTimeText,
+      ]
+        .filter(Boolean)
+        .join(" "),
     });
 
     await fs.writeFile(
@@ -210,6 +225,19 @@ async function main() {
     `${JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
+        count: recipes.length,
+        recipes,
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
+
+  await fs.writeFile(
+    generatedStaticSearchIndex,
+    `${JSON.stringify(
+      {
         count: recipes.length,
         recipes,
       },

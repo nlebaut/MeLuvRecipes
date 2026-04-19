@@ -22,6 +22,11 @@
           </nav>
         </div>
         <p class="hero-copy">Recettes Cooklang publiées en HTML statique avec Hugo et GitHub Pages.</p>
+        <div class="site-search" data-site-search>
+          <label class="search-label" for="site-search-input">Chercher une recette</label>
+          <input id="site-search-input" class="search-input" type="search" placeholder="Titre, ingrédient, texte libre" autocomplete="off">
+          <div class="search-results" data-search-results hidden></div>
+        </div>
       </header>
       <main>
         
@@ -73,5 +78,6 @@ Préchauffer le four à 165°C. Frotter le fond et les cotés d&#39;un plat à g
 
       </main>
     </div>
+    <script type="module" src="../../js/search.js"></script>
   </body>
 </html>
