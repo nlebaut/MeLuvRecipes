@@ -1,6 +1,12 @@
-# Croq'actus Cooklang
+# Recettes Cooklang
 
-Ce dépôt contient les recettes de Croq'actus au format [Cooklang](https://cooklang.org/).
+## Ajouter une nouvelle recette
+
+1. `git pull`
+2. Ajouter la nouvelle recette au format `.cook` dans le dossier `/recipes`. Pour écrire la recette, utiliser https://cooklang.github.io/cooklang-rs/
+3. `git add .`
+4. `git commit -m "nouvelle recette ajoutée"`
+5. `git push origin main`
 
 ## Structure
 
