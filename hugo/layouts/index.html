@@ -14,7 +14,6 @@
         <article class="recipe-card">
           {{ partial "recipe-meta.html" .metadata }}
           <h3><a href="{{ printf "recipes/%s/" .slug | relURL }}">{{ .title }}</a></h3>
-          <p>{{ .summary | truncate 280 }}</p>
         </article>
       {{ end }}
     </div>
