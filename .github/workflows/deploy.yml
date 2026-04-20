@@ -42,22 +42,18 @@ jobs:
           sudo mv cook /usr/local/bin/
           cook --version
 
-      - name: Normalize recipe metadata
-        run: |
-          node scripts/migrate-recipes-frontmatter.mjs
-
       - name: Validate recipes
         run: |
           cook doctor validate --base-path recipes
 
       - name: Build static site
         run: |
-          node scripts/build-site.mjs docs
+          node scripts/build-site.mjs dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: dist
 
   deploy:
     needs: build

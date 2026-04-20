@@ -14,7 +14,7 @@ const generatedStaticCookDir = new URL("../hugo/static/cook/", import.meta.url);
 const generatedStaticSearchIndex = new URL("../hugo/static/search.json", import.meta.url);
 
 function resolveOutputDir() {
-  const outputArg = process.argv[2] ?? "docs";
+  const outputArg = process.argv[2] ?? "dist";
   return new URL(`../${outputArg.replace(/\/+$/, "")}/`, import.meta.url);
 }
 
@@ -71,9 +71,65 @@ function extractMetadata(map = {}) {
   };
 }
 
-function renderItem(item) {
+function formatScalarValue(value) {
+  if (value == null) {
+    return "";
+  }
+
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? String(value) : String(value);
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value.type === "regular") {
+    return formatScalarValue(value.value);
+  }
+
+  if (value.type === "fraction") {
+    return `${formatScalarValue(value.numerator)}/${formatScalarValue(value.denominator)}`;
+  }
+
+  if (value.type === "mixed") {
+    const whole = formatScalarValue(value.whole);
+    const fraction = formatScalarValue(value.fraction);
+    return [whole, fraction].filter(Boolean).join(" ");
+  }
+
+  if ("value" in value) {
+    return formatScalarValue(value.value);
+  }
+
+  return "";
+}
+
+function formatQuantity(quantity) {
+  if (!quantity) {
+    return "";
+  }
+
+  const value = formatScalarValue(quantity.value);
+  const unit = quantity.unit ?? "";
+  return [value, unit].filter(Boolean).join(" ").trim();
+}
+
+function renderItem(item, context) {
   if (item.type === "text") {
     return item.value;
+  }
+
+  if (item.type === "ingredient") {
+    return context.ingredients[item.index]?.name ?? "";
+  }
+
+  if (item.type === "timer") {
+    return formatQuantity(context.timers[item.index]?.quantity);
+  }
+
+  if (item.type === "cookware") {
+    return context.cookware[item.index]?.name ?? "";
   }
 
   if (typeof item.value === "string") {
@@ -87,15 +143,13 @@ function renderItem(item) {
   return "";
 }
 
-function stepText(step) {
+function stepText(step, context) {
   const items = step?.value?.items ?? [];
-  return items.map(renderItem).join("").replace(/\s+/g, " ").trim();
+  return items.map((item) => renderItem(item, context)).join("").replace(/\s+/g, " ").trim();
 }
 
 function ingredientLabel(ingredient) {
-  const quantity = ingredient.quantity ? `${ingredient.quantity} ` : "";
-  const units = Array.isArray(ingredient.units) ? ingredient.units.join("/") : "";
-  const details = [quantity.trim(), units].filter(Boolean).join(" ");
+  const details = formatQuantity(ingredient.quantity);
   return details ? `${ingredient.name} (${details})` : ingredient.name;
 }
 
@@ -154,13 +208,18 @@ async function main() {
     const map = parsed.metadata?.map ?? {};
     const title = map.title ?? entry.name.replace(/\.cook$/, "");
     const slug = slugify(entry.name.replace(/\.cook$/, ""));
+    const renderContext = {
+      ingredients: parsed.ingredients ?? [],
+      timers: parsed.timers ?? [],
+      cookware: parsed.cookware ?? [],
+    };
     const sections = (parsed.sections ?? []).map((section) => ({
       name: section.name,
       steps: (section.content ?? [])
         .filter((item) => item.type === "step")
         .map((item) => ({
           number: item.value?.number ?? null,
-          text: stepText(item),
+          text: stepText(item, renderContext),
         })),
     }));
     const allSteps = sections.flatMap((section) => section.steps);
