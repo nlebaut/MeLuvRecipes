@@ -284,6 +284,12 @@ a:hover {
   gap: 1.15rem;
 }
 
+.recipe-utility-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .meta-chips {
   display: flex;
   flex-wrap: wrap;
@@ -331,25 +337,36 @@ a:hover {
 }
 
 .ingredient-list li {
-  position: relative;
   margin: 0 0 0.75rem;
-  padding: 0.8rem 0.9rem 0.8rem 2.8rem;
   border: 1px solid rgba(102, 74, 37, 0.1);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.7);
   box-shadow: var(--shadow-soft);
 }
 
-.ingredient-list li::before {
-  content: "";
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  width: 0.95rem;
-  height: 0.95rem;
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--leaf), #76945d);
-  box-shadow: 0 0 0 0.3rem rgba(96, 122, 73, 0.12);
+.ingredient-item {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 0.85rem 0.95rem;
+  cursor: pointer;
+}
+
+.ingredient-item input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0.1rem 0 0;
+  accent-color: var(--leaf);
+}
+
+.ingredient-item span {
+  line-height: 1.6;
+}
+
+.ingredient-item input:checked + span {
+  color: var(--muted);
+  text-decoration: line-through;
 }
 
 .step-list {
@@ -437,7 +454,78 @@ a:hover {
     width: 100%;
   }
 
+  .recipe-utility-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
   .recipe-aside {
     position: static;
+  }
+
+  .step-list > li {
+    padding: 3.7rem 1rem 1rem;
+  }
+
+  .step-list > li:not(.step-section)::before {
+    top: 0.95rem;
+  }
+}
+
+@media print {
+  html {
+    background: #ffffff;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+  }
+
+  .page-shell {
+    width: 100%;
+    padding: 0;
+  }
+
+  .hero,
+  .recipe-utility-nav,
+  .header-actions,
+  .site-search,
+  .source-panel {
+    display: none;
+  }
+
+  .panel,
+  .recipe-card,
+  .recipe-row,
+  .ingredient-list li,
+  .step-list > li {
+    box-shadow: none;
+    border-color: #d0d0d0;
+    background: #ffffff;
+  }
+
+  .recipe-layout {
+    display: block;
+  }
+
+  .recipe-aside,
+  .recipe-main {
+    position: static;
+    break-inside: avoid;
+  }
+
+  .ingredient-item input {
+    display: none;
+  }
+
+  .ingredient-item {
+    grid-template-columns: 1fr;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .step-list > li {
+    break-inside: avoid;
   }
 }
