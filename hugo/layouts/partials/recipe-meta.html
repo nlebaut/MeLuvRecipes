@@ -17,4 +17,10 @@
 {{- if or .timeText .time -}}
   {{- $parts = $parts | append (printf "Total %s" (or .timeText .time)) -}}
 {{- end -}}
-{{ delimit $parts " • " }}
+{{- if gt (len $parts) 0 -}}
+  <div class="meta-chips">
+    {{- range $parts -}}
+      <span class="meta-chip">{{ . }}</span>
+    {{- end -}}
+  </div>
+{{- end -}}

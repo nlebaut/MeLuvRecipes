@@ -5,39 +5,50 @@
   {{ end }}
   <article class="recipe-sheet">
     <header class="panel recipe-header">
-      <p class="eyebrow">Recette</p>
-      <h2>{{ $recipe.title }}</h2>
-      <p class="recipe-card-meta">{{ partial "recipe-meta.html" $recipe.metadata }}</p>
-      <div class="header-actions">
-        <a class="button-link" href="{{ "recipes/" | relURL }}">Retour à l'index</a>
+      <div class="recipe-header-grid">
+        <div>
+          <p class="eyebrow">Recette</p>
+          <h2>{{ $recipe.title }}</h2>
+          <p class="section-copy">Tous les éléments utiles de la recette sont regroupés ici pour cuisiner sans revenir en arrière.</p>
+          {{ partial "recipe-meta.html" $recipe.metadata }}
+        </div>
+        <div class="header-actions">
+          <a class="button-link button-link-ghost" href="{{ "" | relURL }}">Accueil</a>
+          <a class="button-link" href="{{ "recipes/" | relURL }}">Retour à l'index</a>
+        </div>
       </div>
     </header>
 
-    {{ if gt (len $recipe.ingredients) 0 }}
-      <section class="panel">
-        <h3>Ingrédients</h3>
-        <ul class="ingredient-list">
-          {{ range $recipe.ingredients }}
-            <li>{{ .label }}</li>
+    <div class="recipe-layout">
+      {{ if gt (len $recipe.ingredients) 0 }}
+        <aside class="panel recipe-aside">
+          <h3>Ingrédients</h3>
+          <ul class="ingredient-list">
+            {{ range $recipe.ingredients }}
+              <li>{{ .label }}</li>
+            {{ end }}
+          </ul>
+        </aside>
+      {{ end }}
+
+      <section class="panel recipe-main">
+        <h3>Préparation</h3>
+        <ol class="step-list">
+          {{ range $recipe.sections }}
+            {{ if .name }}
+              <li class="step-section">{{ .name }}</li>
+            {{ end }}
+            {{ range .steps }}
+              <li>{{ .text }}</li>
+            {{ end }}
           {{ end }}
-        </ul>
+        </ol>
       </section>
-    {{ end }}
+    </div>
 
-    <section class="panel">
-      <h3>Préparation</h3>
-      <ol class="step-list">
-        {{ range $recipe.sections }}
-          {{ range .steps }}
-            <li>{{ .text }}</li>
-          {{ end }}
-        {{ end }}
-      </ol>
-    </section>
-
-    <section class="panel">
-      <h3>Source Cooklang</h3>
+    <details class="panel source-panel">
+      <summary>Afficher la source Cooklang</summary>
       <pre class="source-block">{{ $recipe.rawSource }}</pre>
-    </section>
+    </details>
   </article>
 {{ end }}

@@ -5,13 +5,14 @@
       <div>
         <p class="eyebrow">Bibliothèque</p>
         <h2>{{ $catalog.count }} recettes</h2>
+        <p class="section-copy">Des recettes lisibles, simples à parcourir et pensées pour cuisiner sans perdre le fil entre ingrédients, temps et étapes.</p>
       </div>
       <a class="button-link" href="{{ "recipes/" | relURL }}">Parcourir l'index complet</a>
     </div>
     <div class="recipe-grid">
       {{ range first 18 $catalog.recipes }}
         <article class="recipe-card">
-          <p class="recipe-card-meta">{{ partial "recipe-meta.html" .metadata }}</p>
+          {{ partial "recipe-meta.html" .metadata }}
           <h3><a href="{{ printf "recipes/%s/" .slug | relURL }}">{{ .title }}</a></h3>
           <p>{{ .summary | truncate 280 }}</p>
         </article>

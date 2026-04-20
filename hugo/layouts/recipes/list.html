@@ -15,7 +15,7 @@
             <h3><a href="{{ printf "./%s/" .slug }}">{{ .title }}</a></h3>
             <p>{{ .summary | truncate 320 }}</p>
           </div>
-          <p class="recipe-card-meta">{{ partial "recipe-meta.html" .metadata }}</p>
+          {{ partial "recipe-meta.html" .metadata }}
         </article>
       {{ end }}
     </div>
