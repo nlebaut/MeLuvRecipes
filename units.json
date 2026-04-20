@@ -6,6 +6,8 @@
     "cl": "centiliter",
     "l": "liter",
     "cas": "tablespoon",
-    "cac": "teaspoon"
+    "càs": "tablespoon",
+    "cac": "teaspoon",
+    "càc": "teaspoon"
   }
 }
