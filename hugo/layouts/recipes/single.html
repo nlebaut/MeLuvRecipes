@@ -19,13 +19,20 @@
       </div>
     </header>
 
-    <nav class="recipe-utility-nav" aria-label="Navigation de la recette">
+    <nav class="recipe-utility-nav" aria-label="Navigation de la recette" data-recipe-page>
       {{ if gt (len $recipe.ingredients) 0 }}
         <a class="button-link button-link-ghost" href="#ingredients">Ingrédients</a>
       {{ end }}
       <a class="button-link button-link-ghost" href="#preparation">Préparation</a>
       <a class="button-link button-link-ghost" href="#source">Source</a>
+      <button class="button-link" type="button" data-cook-mode-toggle>Mode cuisine</button>
     </nav>
+
+    <div class="cook-mode-bar" data-cook-mode-bar hidden>
+      <button class="button-link button-link-ghost" type="button" data-step-prev>Etape précédente</button>
+      <p class="cook-mode-status" data-cook-mode-status>Etape 1</p>
+      <button class="button-link button-link-ghost" type="button" data-step-next>Etape suivante</button>
+    </div>
 
     <div class="recipe-layout">
       {{ if gt (len $recipe.ingredients) 0 }}
@@ -52,7 +59,16 @@
               <li class="step-section">{{ .name }}</li>
             {{ end }}
             {{ range .steps }}
-              <li>{{ .text }}</li>
+              <li data-step-card>
+                <div class="step-copy">{{ .text }}</div>
+                {{ if gt (len .timers) 0 }}
+                  <div class="step-timers">
+                    {{ range .timers }}
+                      <span class="step-timer-chip">{{ .label }}</span>
+                    {{ end }}
+                  </div>
+                {{ end }}
+              </li>
             {{ end }}
           {{ end }}
         </ol>

@@ -1,6 +1,6 @@
 {{ define "main" }}
   {{ $catalog := site.Data.recipes.catalog }}
-  <section class="panel">
+  <section class="panel" data-catalog-page>
     <div class="section-heading">
       <div>
         <p class="eyebrow">Index</p>
@@ -8,9 +8,61 @@
       </div>
       <p class="section-copy">{{ $catalog.count }} recettes statiques générées depuis les fichiers `.cook`.</p>
     </div>
+    <form class="catalog-controls" data-catalog-controls>
+      <div class="filter-grid">
+        <label class="filter-field">
+          <span class="filter-label">Ingrédient</span>
+          <input class="search-input filter-input" type="search" list="catalog-ingredients" name="ingredient" placeholder="Poireau, curry, feta...">
+        </label>
+        <label class="filter-field">
+          <span class="filter-label">Temps total max</span>
+          <select class="filter-select" name="time">
+            <option value="">Tous</option>
+            <option value="20">20 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">1 h</option>
+          </select>
+        </label>
+        <label class="filter-field">
+          <span class="filter-label">Portions min</span>
+          <select class="filter-select" name="servings">
+            <option value="">Toutes</option>
+            {{ range $catalog.facets.servings }}
+              <option value="{{ . }}">{{ . }}+</option>
+            {{ end }}
+          </select>
+        </label>
+        <label class="filter-field">
+          <span class="filter-label">Trier par</span>
+          <select class="filter-select" name="sort">
+            <option value="title">Titre</option>
+            <option value="totalTimeMinutes">Temps total</option>
+            <option value="ingredientsCount">Nombre d'ingrédients</option>
+          </select>
+        </label>
+      </div>
+      <div class="catalog-status-row">
+        <p class="catalog-status" data-catalog-status>{{ $catalog.count }} recettes visibles</p>
+        <button class="button-link button-link-ghost" type="reset">Réinitialiser</button>
+      </div>
+      <datalist id="catalog-ingredients">
+        {{ range $catalog.facets.ingredients }}
+          <option value="{{ . }}"></option>
+        {{ end }}
+      </datalist>
+    </form>
     <div class="recipe-list">
       {{ range $catalog.recipes }}
-        <article class="recipe-row">
+        <article
+          class="recipe-row"
+          data-recipe-card
+          data-title="{{ .title }}"
+          data-ingredient-names="{{ delimit .ingredientNames "|" }}"
+          data-total-time="{{ .totalTimeMinutes }}"
+          data-servings="{{ .metadata.servings }}"
+          data-ingredients-count="{{ .ingredientsCount }}"
+        >
           <div>
             <h3><a href="{{ printf "./%s/" .slug }}">{{ .title }}</a></h3>
             <p>{{ .summary | truncate 320 }}</p>
@@ -18,6 +70,10 @@
           {{ partial "recipe-meta.html" .metadata }}
         </article>
       {{ end }}
+    </div>
+    <div class="empty-panel" data-catalog-empty hidden>
+      <h3>Aucune recette ne correspond</h3>
+      <p>Essayez un autre ingrédient, augmentez le temps maximum ou réinitialisez les filtres.</p>
     </div>
   </section>
 {{ end }}

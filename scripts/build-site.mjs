@@ -57,27 +57,13 @@ function runCommand(command, args, cwd = fileURLToPath(rootDir)) {
   });
 }
 
-function extractMetadata(map = {}) {
-  return {
-    title: map.title ?? "",
-    servings: map.servings ?? null,
-    servingsText: map.servings_text ?? null,
-    prepTime: map.prep_time ?? null,
-    prepTimeText: map.prep_time_text ?? null,
-    cookTime: map.cook_time ?? null,
-    cookTimeText: map.cook_time_text ?? null,
-    time: map.time ?? null,
-    timeText: map.time_text ?? null,
-  };
-}
-
 function formatScalarValue(value) {
   if (value == null) {
     return "";
   }
 
   if (typeof value === "number") {
-    return Number.isInteger(value) ? String(value) : String(value);
+    return String(value);
   }
 
   if (typeof value === "string") {
@@ -115,6 +101,82 @@ function formatQuantity(quantity) {
   return [value, unit].filter(Boolean).join(" ").trim();
 }
 
+function parseDurationMinutes(rawValue) {
+  if (!rawValue) {
+    return null;
+  }
+
+  const value = String(rawValue).toLowerCase();
+
+  const hourMatch = value.match(/(\d+)\s*h(?:\s*(\d+))?/);
+  if (hourMatch) {
+    const hours = Number(hourMatch[1] ?? 0);
+    const minutes = Number(hourMatch[2] ?? 0);
+    return (hours * 60) + minutes;
+  }
+
+  const minuteMatch = value.match(/(\d+)(?:\s*[-aà]\s*\d+)?\s*(?:minutes?|mins?|min)\b/);
+  if (minuteMatch) {
+    return Number(minuteMatch[1]);
+  }
+
+  return null;
+}
+
+function parseTags(value) {
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  return String(value)
+    .split(/[;,|]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function extractMetadata(map = {}) {
+  const prepTime = map.prep_time ?? null;
+  const prepTimeText = map.prep_time_text ?? null;
+  const cookTime = map.cook_time ?? null;
+  const cookTimeText = map.cook_time_text ?? null;
+  const time = map.time ?? null;
+  const timeText = map.time_text ?? null;
+  const prepTimeMinutes = parseDurationMinutes(prepTimeText ?? prepTime);
+  const cookTimeMinutes = parseDurationMinutes(cookTimeText ?? cookTime);
+  const totalTimeMinutes = parseDurationMinutes(timeText ?? time) ?? (
+    prepTimeMinutes !== null && cookTimeMinutes !== null
+      ? prepTimeMinutes + cookTimeMinutes
+      : null
+  );
+
+  return {
+    title: map.title ?? "",
+    servings: map.servings ?? null,
+    servingsText: map.servings_text ?? null,
+    prepTime,
+    prepTimeText,
+    prepTimeMinutes,
+    cookTime,
+    cookTimeText,
+    cookTimeMinutes,
+    time,
+    timeText,
+    totalTimeMinutes,
+    description: map.description ?? map.summary ?? null,
+    difficulty: map.difficulty ?? null,
+    tags: parseTags(map.tags),
+  };
+}
+
+function ingredientLabel(ingredient) {
+  const details = formatQuantity(ingredient.quantity);
+  return details ? `${ingredient.name} (${details})` : ingredient.name;
+}
+
 function renderItem(item, context) {
   if (item.type === "text") {
     return item.value;
@@ -143,14 +205,27 @@ function renderItem(item, context) {
   return "";
 }
 
-function stepText(step, context) {
-  const items = step?.value?.items ?? [];
-  return items.map((item) => renderItem(item, context)).join("").replace(/\s+/g, " ").trim();
-}
+function buildStep(item, context) {
+  const items = item?.value?.items ?? [];
+  const text = items.map((entry) => renderItem(entry, context)).join("").replace(/\s+/g, " ").trim();
+  const timers = items
+    .filter((entry) => entry.type === "timer")
+    .map((entry) => {
+      const timer = context.timers[entry.index];
+      const label = formatQuantity(timer?.quantity);
 
-function ingredientLabel(ingredient) {
-  const details = formatQuantity(ingredient.quantity);
-  return details ? `${ingredient.name} (${details})` : ingredient.name;
+      return {
+        label,
+        minutes: parseDurationMinutes(label),
+      };
+    })
+    .filter((timer) => timer.label);
+
+  return {
+    number: item.value?.number ?? null,
+    text,
+    timers,
+  };
 }
 
 function markdownFrontmatter(recipe) {
@@ -160,7 +235,7 @@ function markdownFrontmatter(recipe) {
     `type: "recipes"`,
     `url: ${JSON.stringify(`/recipes/${recipe.slug}/`)}`,
     `recipeSlug: ${JSON.stringify(recipe.slug)}`,
-    `summary: ${JSON.stringify(recipe.summary)}`,
+    `summary: ${JSON.stringify(recipe.description || recipe.summary)}`,
     "---",
     "",
   ].join("\n");
@@ -183,6 +258,29 @@ async function resetGeneratedInputs() {
 
     await fs.rm(new URL(entry.name, legacyRecipeSectionDir), { force: true });
   }
+}
+
+function recipeCardData(recipe) {
+  return {
+    slug: recipe.slug,
+    url: `recipes/${recipe.slug}/`,
+    title: recipe.title,
+    summary: recipe.summary,
+    description: recipe.description,
+    metadata: recipe.metadata,
+    ingredientNames: recipe.ingredientNames,
+    ingredientsCount: recipe.ingredientsCount,
+    tags: recipe.tags,
+    difficulty: recipe.metadata.difficulty,
+    totalTimeMinutes: recipe.metadata.totalTimeMinutes,
+    prepTimeMinutes: recipe.metadata.prepTimeMinutes,
+    cookTimeMinutes: recipe.metadata.cookTimeMinutes,
+    search: recipe.search,
+  };
+}
+
+function firstRecipesMatching(recipes, predicate, limit = 6) {
+  return recipes.filter(predicate).slice(0, limit).map(recipeCardData);
 }
 
 async function main() {
@@ -208,6 +306,8 @@ async function main() {
     const map = parsed.metadata?.map ?? {};
     const title = map.title ?? entry.name.replace(/\.cook$/, "");
     const slug = slugify(entry.name.replace(/\.cook$/, ""));
+    const metadata = extractMetadata(map);
+    const ingredientNames = [...new Set((parsed.ingredients ?? []).map((ingredient) => ingredient.name).filter(Boolean))];
     const renderContext = {
       ingredients: parsed.ingredients ?? [],
       timers: parsed.timers ?? [],
@@ -217,18 +317,40 @@ async function main() {
       name: section.name,
       steps: (section.content ?? [])
         .filter((item) => item.type === "step")
-        .map((item) => ({
-          number: item.value?.number ?? null,
-          text: stepText(item, renderContext),
-        })),
+        .map((item) => buildStep(item, renderContext)),
     }));
     const allSteps = sections.flatMap((section) => section.steps);
     const summary = allSteps[0]?.text ?? "";
-    const metadata = extractMetadata(map);
+    const description = metadata.description ?? summary;
+    const search = {
+      title,
+      summary,
+      description,
+      ingredientsText: ingredientNames.join(" "),
+      timesText: [
+        metadata.servingsText,
+        metadata.prepTime,
+        metadata.prepTimeText,
+        metadata.cookTime,
+        metadata.cookTimeText,
+        metadata.time,
+        metadata.timeText,
+      ]
+        .filter(Boolean)
+        .join(" "),
+      bodyText: source,
+      tagsText: metadata.tags.join(" "),
+    };
+
     const recipe = {
       slug,
       title,
+      description,
+      summary,
       metadata,
+      tags: metadata.tags,
+      ingredientNames,
+      ingredientsCount: ingredientNames.length,
       ingredients: (parsed.ingredients ?? []).map((ingredient) => ({
         ...ingredient,
         label: ingredientLabel(ingredient),
@@ -236,30 +358,12 @@ async function main() {
       cookware: parsed.cookware ?? [],
       timers: parsed.timers ?? [],
       sections,
-      summary,
       rawSource: source,
       schema,
+      search,
     };
 
-    recipes.push({
-      slug,
-      url: `recipes/${slug}/`,
-      title,
-      summary,
-      metadata,
-      searchText: [
-        title,
-        summary,
-        source,
-        metadata.servingsText,
-        metadata.prepTime,
-        metadata.prepTimeText,
-        metadata.cookTime,
-        metadata.cookTimeText,
-      ]
-        .filter(Boolean)
-        .join(" "),
-    });
+    recipes.push(recipe);
 
     await fs.writeFile(
       new URL(`${slug}.json`, generatedDataDir),
@@ -275,30 +379,41 @@ async function main() {
 
   recipes.sort((left, right) => left.title.localeCompare(right.title, "fr", { sensitivity: "base" }));
 
+  const ingredientFacets = [...new Set(recipes.flatMap((recipe) => recipe.ingredientNames))]
+    .sort((left, right) => left.localeCompare(right, "fr", { sensitivity: "base" }));
+
+  const catalog = {
+    generatedAt: new Date().toISOString(),
+    count: recipes.length,
+    recipes: recipes.map(recipeCardData),
+    collections: {
+      quick: firstRecipesMatching(recipes, (recipe) => recipe.metadata.totalTimeMinutes !== null && recipe.metadata.totalTimeMinutes <= 35),
+      simple: firstRecipesMatching(recipes, (recipe) => recipe.ingredientsCount > 0 && recipe.ingredientsCount <= 6),
+      shareable: firstRecipesMatching(recipes, (recipe) => Number(recipe.metadata.servings ?? 0) >= 4),
+    },
+    facets: {
+      ingredients: ingredientFacets,
+      servings: [...new Set(recipes.map((recipe) => recipe.metadata.servings).filter((value) => value != null))].sort((left, right) => left - right),
+    },
+  };
+
+  const searchIndex = {
+    count: recipes.length,
+    recipes: recipes.map((recipe) => ({
+      ...recipeCardData(recipe),
+      search: recipe.search,
+    })),
+  };
+
   await fs.writeFile(
     new URL("catalog.json", generatedDataDir),
-    `${JSON.stringify(
-      {
-        generatedAt: new Date().toISOString(),
-        count: recipes.length,
-        recipes,
-      },
-      null,
-      2,
-    )}\n`,
+    `${JSON.stringify(catalog, null, 2)}\n`,
     "utf8",
   );
 
   await fs.writeFile(
     generatedStaticSearchIndex,
-    `${JSON.stringify(
-      {
-        count: recipes.length,
-        recipes,
-      },
-      null,
-      2,
-    )}\n`,
+    `${JSON.stringify(searchIndex, null, 2)}\n`,
     "utf8",
   );
 

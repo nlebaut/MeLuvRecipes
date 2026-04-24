@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ "css/site.css" | relURL }}">
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Aller au contenu</a>
     <div class="page-shell">
       <header class="hero">
         <div class="hero-row">
@@ -25,14 +26,21 @@
         </div>
         <div class="site-search" data-site-search>
           <label class="search-label" for="site-search-input">Chercher une recette</label>
-          <input id="site-search-input" class="search-input" type="search" placeholder="Titre, ingrédient, texte libre" autocomplete="off">
+          <input id="site-search-input" class="search-input" type="search" placeholder="Titre, ingrédient, texte libre" autocomplete="off" aria-describedby="site-search-help">
+          <p id="site-search-help" class="search-help">Recherche instantanée par titre, ingrédient, durée ou texte de recette.</p>
           <div class="search-results" data-search-results hidden></div>
         </div>
       </header>
-      <main>
+      <main id="main-content">
         {{ block "main" . }}{{ end }}
       </main>
     </div>
     <script type="module" src="{{ "js/search.js" | relURL }}"></script>
+    {{ if and .IsSection (eq .Section "recipes") }}
+      <script type="module" src="{{ "js/catalog.js" | relURL }}"></script>
+    {{ end }}
+    {{ if and .IsPage (eq .Type "recipes") }}
+      <script type="module" src="{{ "js/recipe.js" | relURL }}"></script>
+    {{ end }}
   </body>
 </html>
