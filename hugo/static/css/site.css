@@ -37,10 +37,6 @@ body {
   line-height: 1.6;
 }
 
-body.cook-mode {
-  background: #fbf7f1;
-}
-
 a {
   color: inherit;
 }
@@ -392,27 +388,10 @@ summary:focus-visible {
   gap: 1.15rem;
 }
 
-.recipe-utility-nav,
-.cook-mode-bar {
+.recipe-utility-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-}
-
-.cook-mode-bar {
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.95rem 1.1rem;
-  border: 1px solid rgba(198, 91, 43, 0.14);
-  border-radius: 22px;
-  background: rgba(255, 250, 243, 0.95);
-  box-shadow: var(--shadow-soft);
-}
-
-.cook-mode-status {
-  margin: 0;
-  font-weight: 800;
-  color: var(--accent-strong);
 }
 
 .meta-chips,
@@ -510,11 +489,10 @@ summary:focus-visible {
 .step-list > li {
   position: relative;
   margin: 0 0 1rem;
-  padding: 1rem 1rem 1rem 4rem;
+  padding: 0;
   border: 1px solid rgba(102, 74, 37, 0.12);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.76);
-  line-height: 1.75;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
@@ -534,14 +512,36 @@ summary:focus-visible {
   font-weight: 800;
 }
 
+.step-button {
+  width: 100%;
+  padding: 1rem 1rem 1rem 4rem;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1.75;
+  text-align: left;
+  cursor: pointer;
+}
+
 .step-copy {
   margin-bottom: 0.75rem;
 }
 
 .step-current {
-  border-color: rgba(198, 91, 43, 0.35);
-  box-shadow: 0 0 0 0.35rem rgba(198, 91, 43, 0.09), var(--shadow-soft);
+  border-color: rgba(198, 91, 43, 0.6);
+  background: linear-gradient(180deg, rgba(255, 243, 233, 0.96), rgba(252, 235, 221, 0.98));
+  box-shadow: 0 0 0 0.45rem rgba(198, 91, 43, 0.16), 0 18px 34px rgba(157, 66, 24, 0.12);
   transform: translateY(-1px);
+}
+
+.step-current .step-copy {
+  font-weight: 800;
+}
+
+.step-current::before {
+  box-shadow: 0 0 0 0.22rem rgba(255, 247, 240, 0.95);
 }
 
 .step-section {
@@ -575,13 +575,18 @@ summary:focus-visible {
   white-space: pre-wrap;
 }
 
-body.cook-mode .hero,
-body.cook-mode .source-panel {
-  opacity: 0.65;
+.step-list > li:not(.step-section):hover {
+  border-color: rgba(198, 91, 43, 0.24);
+  box-shadow: 0 0 0 0.2rem rgba(198, 91, 43, 0.06), var(--shadow-soft);
 }
 
-body.cook-mode .recipe-aside {
-  top: 5rem;
+.step-button:focus-visible {
+  outline: none;
+}
+
+.step-list > li[data-step-card]:has(.step-button:focus-visible) {
+  border-color: rgba(198, 91, 43, 0.3);
+  box-shadow: 0 0 0 0.3rem rgba(198, 91, 43, 0.08), var(--shadow-soft);
 }
 
 @media (max-width: 900px) {
@@ -606,15 +611,9 @@ body.cook-mode .recipe-aside {
     width: 100%;
   }
 
-  .recipe-utility-nav,
-  .cook-mode-bar {
+  .recipe-utility-nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
-  }
-
-  .cook-mode-status {
-    grid-column: 1 / -1;
-    text-align: center;
   }
 
   .recipe-aside {
@@ -622,11 +621,15 @@ body.cook-mode .recipe-aside {
   }
 
   .step-list > li {
-    padding: 3.7rem 1rem 1rem;
+    min-height: 0;
   }
 
   .step-list > li:not(.step-section)::before {
     top: 0.95rem;
+  }
+
+  .step-button {
+    padding: 3.7rem 1rem 1rem;
   }
 }
 
@@ -649,7 +652,6 @@ body.cook-mode .recipe-aside {
   .skip-link,
   .hero,
   .recipe-utility-nav,
-  .cook-mode-bar,
   .header-actions,
   .site-search,
   .source-panel {

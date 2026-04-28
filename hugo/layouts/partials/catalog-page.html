@@ -64,7 +64,6 @@
       >
         <div>
           <h3><a href="{{ if $.IsHome }}{{ printf "recipes/%s/" .slug | relURL }}{{ else }}{{ printf "./%s/" .slug }}{{ end }}">{{ .title }}</a></h3>
-          <p>{{ .summary | truncate 320 }}</p>
         </div>
         {{ partial "recipe-meta.html" .metadata }}
       </article>

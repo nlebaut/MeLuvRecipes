@@ -14,7 +14,6 @@
         </div>
         <div class="header-actions">
           <a class="button-link button-link-ghost" href="{{ "" | relURL }}">Accueil</a>
-          <a class="button-link" href="{{ "recipes/" | relURL }}">Retour à l'index</a>
         </div>
       </div>
     </header>
@@ -25,14 +24,7 @@
       {{ end }}
       <a class="button-link button-link-ghost" href="#preparation">Préparation</a>
       <a class="button-link button-link-ghost" href="#source">Source</a>
-      <button class="button-link" type="button" data-cook-mode-toggle>Mode cuisine</button>
     </nav>
-
-    <div class="cook-mode-bar" data-cook-mode-bar hidden>
-      <button class="button-link button-link-ghost" type="button" data-step-prev>Etape précédente</button>
-      <p class="cook-mode-status" data-cook-mode-status>Etape 1</p>
-      <button class="button-link button-link-ghost" type="button" data-step-next>Etape suivante</button>
-    </div>
 
     <div class="recipe-layout">
       {{ if gt (len $recipe.ingredients) 0 }}
@@ -60,14 +52,16 @@
             {{ end }}
             {{ range .steps }}
               <li data-step-card>
-                <div class="step-copy">{{ .text }}</div>
-                {{ if gt (len .timers) 0 }}
-                  <div class="step-timers">
-                    {{ range .timers }}
-                      <span class="step-timer-chip">{{ .label }}</span>
-                    {{ end }}
-                  </div>
-                {{ end }}
+                <button class="step-button" type="button" aria-pressed="false">
+                  <div class="step-copy">{{ .text }}</div>
+                  {{ if gt (len .timers) 0 }}
+                    <div class="step-timers">
+                      {{ range .timers }}
+                        <span class="step-timer-chip">{{ .label }}</span>
+                      {{ end }}
+                    </div>
+                  {{ end }}
+                </button>
               </li>
             {{ end }}
           {{ end }}
