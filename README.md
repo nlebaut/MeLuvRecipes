@@ -1,9 +1,30 @@
 # Recettes Cooklang
 
+## Créer une nouvelle recette
+
+Pour écrire la recette, utiliser https://cooklang.github.io/cooklang-rs/
+
+Créer un nouveau fichier `.cook` dans `recipes/` en suivant la [syntaxe Cooklang](https://cooklang.org/docs/spec/) avec un frontmatter YAML, par exemple :
+
+```cooklang
+---
+title: "Saumon poêlé aux asperges"
+servings: 4
+servings_text: "4 personnes"
+prep_time: "10 min"
+prep_time_text: "10 min"
+cook_time: "10 min"
+cook_time_text: "10 min"
+---
+Eplucher les @asperges{420g}. Découper les @dos de saumon{4} en fines tranches.
+
+Plonger les asperges dans une casserole d’eau bouillante salée. Les faire cuire ~{5%minutes}.
+```
+
 ## Ajouter une nouvelle recette
 
 1. `git pull`
-2. Ajouter la nouvelle recette au format `.cook` dans le dossier `/recipes`. Pour écrire la recette, utiliser https://cooklang.github.io/cooklang-rs/
+2. Ajouter manuellement la nouvelle recette au format `.cook` dans le dossier `/recipes`. 
 3. `git add .`
 4. `git commit -m "nouvelle recette ajoutée"`
 5. `git push origin main`
@@ -30,22 +51,6 @@ Si vous voulez que **chaque nouveau fichier `.cook` poussé sur `main`** soit au
 - `Source: GitHub Actions`
 
 Le workflow du dépôt installe CookCLI et Hugo, rebâtit le site dans `dist/` à chaque push sur `main`, puis publie le résultat sur GitHub Pages.
-
-## Comment ajouter une recette
-
-Créer un nouveau fichier `.cook` dans `recipes/` en suivant la [syntaxe Cooklang](https://cooklang.org/docs/spec/) avec un frontmatter YAML, par exemple :
-
-```cooklang
----
-title: "Tarte aux pommes"
-servings: 6
-servings_text: "6 parts"
-prep_time: "20 min"
-cook_time: "35 min"
----
-
-Couper les @pommes{4} en quartiers et les disposer dans un moule.
-```
 
 ## Développement local
 
