@@ -23,11 +23,12 @@ Plonger les asperges dans une casserole d’eau bouillante salée. Les faire cui
 
 ## Ajouter une nouvelle recette
 
-1. `git pull`
-2. Ajouter manuellement la nouvelle recette au format `.cook` dans le dossier `/recipes`. 
-3. `git add .`
-4. `git commit -m "nouvelle recette ajoutée"`
-5. `git push origin main`
+1. Ouvrir Git Bash depuis le répertoire cooklang
+2. `git pull`
+3. Ajouter manuellement la nouvelle recette au format `.cook` dans le dossier `/recipes`. 
+4. `git add .`
+5. `git commit -m "nouvelle recette ajoutée"`
+6. `git push origin main`
 
 ## Structure
 
