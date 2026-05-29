@@ -21,6 +21,8 @@ cook_time_text: "10 min"
 ~{5%minutes}.
 ```
 
+Attention à ne pas mettre d'accent dans le nom du fichier. 
+
 ## Ajouter une nouvelle recette
 
 1. Ouvrir Git Bash depuis le répertoire cooklang
@@ -29,6 +31,10 @@ cook_time_text: "10 min"
 4. `git add .`
 5. `git commit -m "nouvelle recette ajoutée"`
 6. `git push origin main`
+
+Autres options : 
+a. `git status` pour voir l'état des lieux des actions en cours
+b. `git commit --amend -m "nouvelle recette ajoutée"` pour modifier le dernier commit réalisé
 
 ## Structure
 
