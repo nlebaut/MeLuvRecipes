@@ -33,6 +33,7 @@ Attention à ne pas mettre d'accent dans le nom du fichier.
 6. `git push origin main`
 
 Autres options : 
+
 7. `git status` pour voir l'état des lieux des actions en cours
 8. `git commit --amend -m "nouvelle recette ajoutée"` pour modifier le dernier commit réalisé
 
