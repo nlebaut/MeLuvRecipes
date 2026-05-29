@@ -16,9 +16,9 @@ prep_time_text: "10 min"
 cook_time: "10 min"
 cook_time_text: "10 min"
 ---
-Eplucher les @asperges{420g}. Découper les @dos de saumon{4} en fines tranches.
+@asperges{420g}
 
-Plonger les asperges dans une casserole d’eau bouillante salée. Les faire cuire ~{5%minutes}.
+~{5%minutes}.
 ```
 
 ## Ajouter une nouvelle recette
