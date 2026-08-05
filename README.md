@@ -16,9 +16,9 @@ prep_time_text: "10 min"
 cook_time: "10 min"
 cook_time_text: "10 min"
 ---
-@asperges{420g}
+{}
 
-~{5%minutes}.
+~{5%minutes}
 ```
 
 Attention à ne pas mettre d'accent dans le nom du fichier. 
