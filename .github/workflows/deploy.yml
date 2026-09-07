@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3

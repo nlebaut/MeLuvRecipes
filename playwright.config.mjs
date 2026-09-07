@@ -10,4 +10,8 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:1313",
   },
+  projects: [
+    { name: "chromium", use: { browserName: "chromium" } },
+    { name: "firefox", use: { browserName: "firefox" } },
+  ],
 });

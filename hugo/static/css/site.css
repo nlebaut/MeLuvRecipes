@@ -236,6 +236,20 @@ summary:focus-visible {
   font-weight: 700;
 }
 
+.search-all-results {
+  padding: 0.65rem 0.95rem;
+  border-radius: 14px;
+  color: var(--accent-strong);
+  font-weight: 800;
+  text-align: center;
+}
+
+.search-page-results {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 .search-hit {
   display: grid;
   gap: 0.28rem;
