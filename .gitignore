@@ -5,6 +5,8 @@ node_modules/
 
 # Testing
 coverage/
+playwright-report/
+test-results/
 
 # Production
 build/
@@ -15,6 +17,7 @@ _site/
 hugo/data/recipes/
 hugo/content/generated-recipes/
 hugo/static/cook/
+hugo/public/
 
 # Misc
 .DS_Store

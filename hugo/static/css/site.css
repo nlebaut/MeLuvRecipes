@@ -108,6 +108,10 @@ summary:focus-visible {
   align-items: flex-start;
 }
 
+.recipe-row[hidden] {
+  display: none;
+}
+
 .hero-copy-block {
   max-width: 48rem;
 }
@@ -198,8 +202,7 @@ summary:focus-visible {
   font-size: 0.92rem;
 }
 
-.search-input,
-.filter-select {
+.search-input {
   width: 100%;
   padding: 1rem 1.15rem;
   border: 1px solid rgba(102, 74, 37, 0.16);
@@ -208,10 +211,6 @@ summary:focus-visible {
   font: inherit;
   color: var(--text);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-soft);
-}
-
-.filter-select {
-  appearance: none;
 }
 
 .search-results {
@@ -355,21 +354,34 @@ summary:focus-visible {
   background: var(--surface-soft);
 }
 
-.filter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.9rem;
-}
-
-.filter-field {
-  display: grid;
-}
-
-.catalog-status-row {
+.alphabet-filter {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.alphabet-filter-button {
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(102, 74, 37, 0.16);
+  border-radius: 0.7rem;
+  background: var(--surface);
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.alphabet-filter-button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.alphabet-filter-button:focus-visible {
+  outline: 3px solid rgba(198, 91, 43, 0.35);
+  outline-offset: 2px;
 }
 
 .catalog-status {
@@ -599,8 +611,7 @@ summary:focus-visible {
   .section-heading,
   .recipe-row,
   .recipe-header-grid,
-  .recipe-layout,
-  .catalog-status-row {
+  .recipe-layout {
     display: flex;
     flex-direction: column;
   }

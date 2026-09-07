@@ -68,6 +68,14 @@ Pour regénérer le site statique localement :
 node scripts/build-site.mjs
 ```
 
+Pour le tester localement, servez-le par HTTP puis ouvrez `http://127.0.0.1:1313` :
+
+```bash
+hugo server --source hugo
+```
+
+N’ouvrez pas directement `dist/index.html` : les modules JavaScript et les données de recherche nécessitent un serveur HTTP.
+
 Pour regénérer le site statique dans un dossier explicite :
 
 ```bash
@@ -78,6 +86,14 @@ Prérequis locaux :
 
 ```bash
 brew install hugo
+```
+
+Les tests navigateur s’exécutent après la génération du site :
+
+```bash
+npm install
+npx playwright install chromium
+npm test
 ```
 
 Pour lancer l'interface web embarquée de CookCLI sur votre machine :

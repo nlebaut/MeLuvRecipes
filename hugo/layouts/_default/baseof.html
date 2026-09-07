@@ -35,7 +35,7 @@
       </main>
     </div>
     <script type="module" src="{{ "js/search.js" | relURL }}"></script>
-    {{ if and .IsSection (eq .Section "recipes") }}
+    {{ if or .IsHome (and .IsSection (eq .Section "recipes")) }}
       <script type="module" src="{{ "js/catalog.js" | relURL }}"></script>
     {{ end }}
     {{ if and .IsPage (eq .Type "recipes") }}
