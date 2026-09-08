@@ -398,6 +398,28 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
+@media (min-width: 700px) and (max-width: 1199px) {
+  .alphabet-filter {
+    display: grid;
+    grid-template-columns: repeat(13, minmax(0, 1fr));
+  }
+
+  .alphabet-filter-button {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .alphabet-filter {
+    display: grid;
+    grid-template-columns: repeat(26, minmax(0, 1fr));
+  }
+
+  .alphabet-filter-button {
+    min-width: 0;
+  }
+}
+
 .catalog-status {
   margin: 0;
   color: var(--muted);
