@@ -1,5 +1,5 @@
 {{ define "main" }}
-  {{ $recipe := index site.Data.recipes .Params.recipeSlug }}
+  {{ $recipe := index hugo.Data.recipes .Params.recipeSlug }}
   {{ if $recipe.schema }}
     <script type="application/ld+json">{{ $recipe.schema | jsonify | safeJS }}</script>
   {{ end }}

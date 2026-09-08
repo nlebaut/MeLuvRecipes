@@ -249,6 +249,7 @@ async function resetGeneratedInputs() {
 
   await fs.mkdir(generatedDataDir, { recursive: true });
   await fs.mkdir(generatedContentDir, { recursive: true });
+  await fs.writeFile(new URL("_index.md", generatedContentDir), "---\nbuild:\n  render: never\n  list: never\n---\n", "utf8");
 
   const legacyEntries = await fs.readdir(legacyRecipeSectionDir, { withFileTypes: true }).catch(() => []);
   for (const entry of legacyEntries) {

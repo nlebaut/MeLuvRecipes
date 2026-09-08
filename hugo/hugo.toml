@@ -1,5 +1,5 @@
 baseURL = "/"
-languageCode = "fr-fr"
+locale = "fr-fr"
 title = "MeLuv Recipes"
 defaultContentLanguage = "fr"
 disableKinds = ["taxonomy", "term", "RSS", "sitemap"]
