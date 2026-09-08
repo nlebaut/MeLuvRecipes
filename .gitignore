@@ -17,6 +17,7 @@ _site/
 hugo/data/recipes/
 hugo/content/generated-recipes/
 hugo/static/cook/
+hugo/static/search.json
 hugo/public/
 
 # Misc

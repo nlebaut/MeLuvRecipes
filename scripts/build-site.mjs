@@ -9,8 +9,6 @@ const recipesDir = new URL("../recipes/", import.meta.url);
 const hugoDir = new URL("../hugo/", import.meta.url);
 const generatedDataDir = new URL("../hugo/data/recipes/", import.meta.url);
 const generatedContentDir = new URL("../hugo/content/generated-recipes/", import.meta.url);
-const legacyRecipeSectionDir = new URL("../hugo/content/recipes/", import.meta.url);
-const generatedStaticCookDir = new URL("../hugo/static/cook/", import.meta.url);
 const generatedStaticSearchIndex = new URL("../hugo/static/search.json", import.meta.url);
 
 function resolveOutputDir() {
@@ -244,21 +242,11 @@ function markdownFrontmatter(recipe) {
 async function resetGeneratedInputs() {
   await fs.rm(generatedDataDir, { recursive: true, force: true });
   await fs.rm(generatedContentDir, { recursive: true, force: true });
-  await fs.rm(generatedStaticCookDir, { recursive: true, force: true });
   await fs.rm(generatedStaticSearchIndex, { force: true });
 
   await fs.mkdir(generatedDataDir, { recursive: true });
   await fs.mkdir(generatedContentDir, { recursive: true });
   await fs.writeFile(new URL("_index.md", generatedContentDir), "---\nbuild:\n  render: never\n  list: never\n---\n", "utf8");
-
-  const legacyEntries = await fs.readdir(legacyRecipeSectionDir, { withFileTypes: true }).catch(() => []);
-  for (const entry of legacyEntries) {
-    if (!entry.isFile() || entry.name === "_index.md") {
-      continue;
-    }
-
-    await fs.rm(new URL(entry.name, legacyRecipeSectionDir), { force: true });
-  }
 }
 
 function recipeCardData(recipe) {
@@ -269,19 +257,8 @@ function recipeCardData(recipe) {
     summary: recipe.summary,
     description: recipe.description,
     metadata: recipe.metadata,
-    ingredientNames: recipe.ingredientNames,
-    ingredientsCount: recipe.ingredientsCount,
-    tags: recipe.tags,
-    difficulty: recipe.metadata.difficulty,
-    totalTimeMinutes: recipe.metadata.totalTimeMinutes,
-    prepTimeMinutes: recipe.metadata.prepTimeMinutes,
-    cookTimeMinutes: recipe.metadata.cookTimeMinutes,
     search: recipe.search,
   };
-}
-
-function firstRecipesMatching(recipes, predicate, limit = 6) {
-  return recipes.filter(predicate).slice(0, limit).map(recipeCardData);
 }
 
 async function main() {
@@ -328,19 +305,7 @@ async function main() {
       summary,
       description,
       ingredientsText: ingredientNames.join(" "),
-      timesText: [
-        metadata.servingsText,
-        metadata.prepTime,
-        metadata.prepTimeText,
-        metadata.cookTime,
-        metadata.cookTimeText,
-        metadata.time,
-        metadata.timeText,
-      ]
-        .filter(Boolean)
-        .join(" "),
       bodyText: source,
-      tagsText: metadata.tags.join(" "),
     };
 
     const recipe = {
@@ -349,14 +314,10 @@ async function main() {
       description,
       summary,
       metadata,
-      tags: metadata.tags,
-      ingredientNames,
-      ingredientsCount: ingredientNames.length,
       ingredients: (parsed.ingredients ?? []).map((ingredient) => ({
         ...ingredient,
         label: ingredientLabel(ingredient),
       })),
-      cookware: parsed.cookware ?? [],
       timers: parsed.timers ?? [],
       sections,
       rawSource: source,
@@ -380,22 +341,10 @@ async function main() {
 
   recipes.sort((left, right) => left.title.localeCompare(right.title, "fr", { sensitivity: "base" }));
 
-  const ingredientFacets = [...new Set(recipes.flatMap((recipe) => recipe.ingredientNames))]
-    .sort((left, right) => left.localeCompare(right, "fr", { sensitivity: "base" }));
-
   const catalog = {
     generatedAt: new Date().toISOString(),
     count: recipes.length,
     recipes: recipes.map(recipeCardData),
-    collections: {
-      quick: firstRecipesMatching(recipes, (recipe) => recipe.metadata.totalTimeMinutes !== null && recipe.metadata.totalTimeMinutes <= 35),
-      simple: firstRecipesMatching(recipes, (recipe) => recipe.ingredientsCount > 0 && recipe.ingredientsCount <= 6),
-      shareable: firstRecipesMatching(recipes, (recipe) => Number(recipe.metadata.servings ?? 0) >= 4),
-    },
-    facets: {
-      ingredients: ingredientFacets,
-      servings: [...new Set(recipes.map((recipe) => recipe.metadata.servings).filter((value) => value != null))].sort((left, right) => left - right),
-    },
   };
 
   const searchIndex = {
