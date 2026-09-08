@@ -40,6 +40,7 @@ test("the search page shows every matching recipe", async ({ page }) => {
 
   await page.goto("/");
   const input = page.getByRole("searchbox", { name: "Chercher une recette" });
+  await expect(page.locator("[data-search-results]")).toBeHidden();
   await input.fill("a");
 
   const suggestions = page.locator("[data-search-results] .search-hit");

@@ -228,6 +228,10 @@ summary:focus-visible {
   box-shadow: var(--shadow);
 }
 
+.search-results[hidden] {
+  display: none;
+}
+
 .search-results-header {
   margin: 0;
   padding: 0.25rem 0.35rem;
