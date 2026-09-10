@@ -30,6 +30,11 @@
       </article>
     {{ end }}
   </div>
+  <nav class="catalog-pagination" aria-label="Pagination des recettes" data-catalog-pagination>
+    <button class="button-link" type="button" data-catalog-previous>Précédentes</button>
+    <div class="catalog-page" data-catalog-page-number></div>
+    <button class="button-link" type="button" data-catalog-next>Suivantes</button>
+  </nav>
   <div class="empty-panel" data-catalog-empty hidden>
     <h3>Aucune recette ne correspond</h3>
     <p>Essayez un autre ingrédient, augmentez le temps maximum ou réinitialisez les filtres.</p>

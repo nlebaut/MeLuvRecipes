@@ -30,8 +30,33 @@ test("the A filter shows matching recipes and toggles off", async ({ page }) => 
 
   await aButton.click();
   await expect(aButton).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator("[data-recipe-card]:visible")).toHaveCount(total);
+  await expect(page.locator("[data-recipe-card]:visible")).toHaveCount(20);
   expect(errors).toEqual([]);
+});
+
+test("the catalog paginates recipes by 20", async ({ page }) => {
+  await page.goto("/");
+
+  const cards = page.locator("[data-recipe-card]");
+  const nextButton = page.getByRole("button", { name: "Suivantes" });
+  const previousButton = page.getByRole("button", { name: "Précédentes" });
+
+  await expect(cards.filter({ visible: true })).toHaveCount(20);
+  await expect(page.getByRole("button", { name: "Aller à la page 1" })).toHaveAttribute("aria-current", "page");
+  await expect(previousButton).toBeDisabled();
+
+  const firstPageTitles = await page.locator("[data-recipe-card]:visible").evaluateAll((elements) => elements.map((element) => element.dataset.title));
+  await nextButton.click();
+  await expect(cards.filter({ visible: true })).toHaveCount(20);
+  await expect(page.getByRole("button", { name: "Aller à la page 2" })).toHaveAttribute("aria-current", "page");
+  await expect(previousButton).toBeEnabled();
+  const secondPageTitles = await page.locator("[data-recipe-card]:visible").evaluateAll((elements) => elements.map((element) => element.dataset.title));
+
+  expect(secondPageTitles).not.toEqual(firstPageTitles);
+
+  await page.getByRole("button", { name: "Aller à la page 7" }).click();
+  await expect(page.getByRole("button", { name: "Aller à la page 7" })).toHaveAttribute("aria-current", "page");
+  await expect(cards.filter({ visible: true })).toHaveCount(20);
 });
 
 test("the search page shows every matching recipe", async ({ page }) => {
