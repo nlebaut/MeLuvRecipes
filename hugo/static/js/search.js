@@ -95,7 +95,8 @@ const loadRecipes = () => {
 if (root) {
   const input = root.querySelector(".search-input");
   const results = root.querySelector("[data-search-results]");
-  let recipes = [];
+  let recipes;
+  let loading = false;
   let activeIndex = -1;
 
   results.id = "site-search-results";
@@ -157,21 +158,38 @@ if (root) {
 
   const updateResults = () => {
     const query = input.value.trim();
-    renderResults(query ? findMatches(recipes, query) : [], query);
+    if (!query) {
+      renderResults([], query);
+      return;
+    }
+
+    if (!recipes) {
+      results.innerHTML = "<p class=\"search-empty\">Chargement de la recherche…</p>";
+      openResults();
+      loadSearchIndex();
+      return;
+    }
+
+    renderResults(findMatches(recipes, query), query);
   };
 
-  loadRecipes()
-    .then((loadedRecipes) => {
-      recipes = loadedRecipes;
-      if (input.value.trim() && !searchPage) {
+  const loadSearchIndex = () => {
+    if (loading || recipes) {
+      return;
+    }
+
+    loading = true;
+    loadRecipes()
+      .then((loadedRecipes) => {
+        recipes = loadedRecipes;
         updateResults();
-      }
-    })
-    .catch(() => {
-      input.disabled = true;
-      results.hidden = false;
-      results.innerHTML = "<p class=\"search-empty\">La recherche est indisponible pour le moment.</p>";
-    });
+      })
+      .catch(() => {
+        input.disabled = true;
+        results.hidden = false;
+        results.innerHTML = "<p class=\"search-empty\">La recherche est indisponible pour le moment.</p>";
+      });
+  };
 
   input.addEventListener("input", updateResults);
   input.addEventListener("keydown", (event) => {
@@ -209,6 +227,7 @@ if (root) {
   });
 
   input.addEventListener("focus", () => {
+    loadSearchIndex();
     if (results.innerHTML.trim() && input.value.trim()) {
       openResults();
       if (activeIndex < 0) {
