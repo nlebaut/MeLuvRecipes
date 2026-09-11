@@ -99,43 +99,6 @@ function formatQuantity(quantity) {
   return [value, unit].filter(Boolean).join(" ").trim();
 }
 
-function parseDurationMinutes(rawValue) {
-  if (!rawValue) {
-    return null;
-  }
-
-  const value = String(rawValue).toLowerCase();
-
-  const hourMatch = value.match(/(\d+)\s*h(?:\s*(\d+))?/);
-  if (hourMatch) {
-    const hours = Number(hourMatch[1] ?? 0);
-    const minutes = Number(hourMatch[2] ?? 0);
-    return (hours * 60) + minutes;
-  }
-
-  const minuteMatch = value.match(/(\d+)(?:\s*[-aà]\s*\d+)?\s*(?:minutes?|mins?|min)\b/);
-  if (minuteMatch) {
-    return Number(minuteMatch[1]);
-  }
-
-  return null;
-}
-
-function parseTags(value) {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item).trim()).filter(Boolean);
-  }
-
-  return String(value)
-    .split(/[;,|]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
 function extractMetadata(map = {}) {
   const prepTime = map.prep_time ?? null;
   const prepTimeText = map.prep_time_text ?? null;
@@ -143,30 +106,17 @@ function extractMetadata(map = {}) {
   const cookTimeText = map.cook_time_text ?? null;
   const time = map.time ?? null;
   const timeText = map.time_text ?? null;
-  const prepTimeMinutes = parseDurationMinutes(prepTimeText ?? prepTime);
-  const cookTimeMinutes = parseDurationMinutes(cookTimeText ?? cookTime);
-  const totalTimeMinutes = parseDurationMinutes(timeText ?? time) ?? (
-    prepTimeMinutes !== null && cookTimeMinutes !== null
-      ? prepTimeMinutes + cookTimeMinutes
-      : null
-  );
-
   return {
     title: map.title ?? "",
     servings: map.servings ?? null,
     servingsText: map.servings_text ?? null,
     prepTime,
     prepTimeText,
-    prepTimeMinutes,
     cookTime,
     cookTimeText,
-    cookTimeMinutes,
     time,
     timeText,
-    totalTimeMinutes,
     description: map.description ?? map.summary ?? null,
-    difficulty: map.difficulty ?? null,
-    tags: parseTags(map.tags),
   };
 }
 
@@ -212,10 +162,7 @@ function buildStep(item, context) {
       const timer = context.timers[entry.index];
       const label = formatQuantity(timer?.quantity);
 
-      return {
-        label,
-        minutes: parseDurationMinutes(label),
-      };
+      return { label };
     })
     .filter((timer) => timer.label);
 
@@ -257,7 +204,6 @@ function recipeCardData(recipe) {
     summary: recipe.summary,
     description: recipe.description,
     metadata: recipe.metadata,
-    search: recipe.search,
   };
 }
 

@@ -153,9 +153,7 @@ summary:focus-visible {
 }
 
 .panel h3,
-.recipe-card h3,
-.recipe-row h3,
-.collection-card h3 {
+.recipe-row h3 {
   margin: 0 0 0.7rem;
   font-family: "Fraunces", "Iowan Old Style", serif;
   font-size: 1.35rem;
@@ -165,9 +163,7 @@ summary:focus-visible {
 
 .hero-copy,
 .section-copy,
-.recipe-row p,
-.recipe-card p,
-.collection-card p {
+.recipe-row p {
   color: var(--muted);
   line-height: 1.7;
   max-width: 62ch;
@@ -185,8 +181,7 @@ summary:focus-visible {
   z-index: 30;
 }
 
-.search-label,
-.filter-label {
+.search-label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.82rem;
@@ -317,15 +312,6 @@ summary:focus-visible {
   background: rgba(255, 255, 255, 0.55);
 }
 
-.collection-grid,
-.recipe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.15rem;
-}
-
-.collection-card,
-.recipe-card,
 .recipe-row,
 .empty-panel {
   padding: 1.2rem;
@@ -335,7 +321,6 @@ summary:focus-visible {
   box-shadow: var(--shadow-soft);
 }
 
-.collection-links,
 .recipe-list,
 .ingredient-list {
   margin: 0;
@@ -343,24 +328,8 @@ summary:focus-visible {
   list-style: none;
 }
 
-.collection-links {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.collection-links a {
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.recipe-card h3 a,
 .recipe-row h3 a {
   text-decoration: none;
-}
-
-.recipe-card-copy {
-  margin: 0;
-  font-size: 0.95rem;
 }
 
 .catalog-controls {
@@ -752,7 +721,6 @@ summary:focus-visible {
   }
 
   .panel,
-  .recipe-card,
   .recipe-row,
   .ingredient-list li,
   .step-list > li {

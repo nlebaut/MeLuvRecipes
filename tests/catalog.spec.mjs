@@ -87,3 +87,24 @@ test("the search page handles no result", async ({ page }) => {
 
   await expect(page.locator("[data-search-page-results]")).toContainText("Aucune recette ne correspond à cette recherche.");
 });
+
+test("the search index keeps only displayed recipe metadata", async ({ request }) => {
+  const response = await request.get("/search.json");
+  const { recipes } = await response.json();
+
+  expect(response.ok()).toBe(true);
+  expect(recipes.length).toBeGreaterThan(0);
+  expect(Object.keys(recipes[0].metadata).sort()).toEqual([
+    "cookTime",
+    "cookTimeText",
+    "description",
+    "prepTime",
+    "prepTimeText",
+    "servings",
+    "servingsText",
+    "time",
+    "timeText",
+    "title",
+  ]);
+  expect(recipes[0].search.bodyText).toBeTruthy();
+});
