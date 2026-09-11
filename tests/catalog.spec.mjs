@@ -7,6 +7,16 @@ const firstLetter = (title) => title
   .replace(/^[^A-Z]+/, "")
   .charAt(0);
 
+test("the search input has combobox semantics", async ({ page }) => {
+  await page.goto("/");
+
+  const search = page.getByLabel("Chercher une recette");
+  await expect(search).toHaveAttribute("role", "combobox");
+  await expect(search).toHaveAttribute("aria-controls", "site-search-results");
+  await expect(search).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("[data-site-search]")).not.toHaveAttribute("role", "combobox");
+});
+
 test("the A filter shows matching recipes and toggles off", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error));
@@ -64,7 +74,7 @@ test("the search page shows every matching recipe", async ({ page }) => {
   page.on("pageerror", (error) => errors.push(error));
 
   await page.goto("/");
-  const input = page.getByRole("searchbox", { name: "Chercher une recette" });
+  const input = page.getByLabel("Chercher une recette");
   await expect(page.locator("[data-search-results]")).toBeHidden();
   await input.fill("a");
 

@@ -98,25 +98,24 @@ if (root) {
   let recipes = [];
   let activeIndex = -1;
 
-  root.setAttribute("role", "combobox");
-  root.setAttribute("aria-haspopup", "listbox");
-  root.setAttribute("aria-owns", "site-search-results");
-  root.setAttribute("aria-expanded", "false");
   results.id = "site-search-results";
   results.setAttribute("role", "listbox");
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-haspopup", "listbox");
   input.setAttribute("aria-autocomplete", "list");
   input.setAttribute("aria-controls", results.id);
+  input.setAttribute("aria-expanded", "false");
 
   const closeResults = () => {
     activeIndex = -1;
     results.hidden = true;
-    root.setAttribute("aria-expanded", "false");
+    input.setAttribute("aria-expanded", "false");
     input.removeAttribute("aria-activedescendant");
   };
 
   const openResults = () => {
     results.hidden = false;
-    root.setAttribute("aria-expanded", "true");
+    input.setAttribute("aria-expanded", "true");
   };
 
   const setActiveResult = (index) => {
