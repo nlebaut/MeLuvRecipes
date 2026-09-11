@@ -652,6 +652,22 @@ summary:focus-visible {
   box-shadow: 0 0 0 0.3rem rgba(120, 155, 134, 0.12), var(--shadow-soft);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .search-hit {
+    transition: none;
+  }
+
+  .search-hit:hover,
+  .search-hit-active,
+  .step-current {
+    transform: none;
+  }
+}
+
 @media (max-width: 900px) {
   .hero,
   .panel {
