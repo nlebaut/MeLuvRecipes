@@ -468,6 +468,56 @@ summary:focus-visible {
   margin-top: 1rem;
 }
 
+.servings-control {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.servings-input-group {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.servings-button,
+.servings-input-group input {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 800;
+}
+
+.servings-button {
+  cursor: pointer;
+}
+
+.servings-button:hover {
+  background: var(--accent-soft);
+}
+
+.servings-button:focus-visible,
+.servings-input-group input:focus-visible {
+  outline: 3px solid rgba(120, 155, 134, 0.45);
+  outline-offset: -3px;
+}
+
+.servings-input-group input {
+  width: 4rem;
+  min-width: 0;
+  border-inline: 1px solid var(--line);
+  text-align: center;
+}
+
 .meta-chip,
 .step-timer-chip {
   display: inline-flex;

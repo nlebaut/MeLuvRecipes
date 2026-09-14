@@ -1,26 +1,22 @@
-{{- $parts := slice -}}
-{{- if or .servingsText .servings -}}
-  {{- $display := printf "%v" (or .servingsText .servings) -}}
-  {{- $canonical := printf "%v" .servings -}}
-  {{- if eq $display $canonical -}}
-    {{- $parts = $parts | append (printf "%s portions" $display) -}}
-  {{- else -}}
-    {{- $parts = $parts | append $display -}}
-  {{- end -}}
-{{- end -}}
-{{- if or .prepTimeText .prepTime -}}
-  {{- $parts = $parts | append (printf "Prep %s" (or .prepTimeText .prepTime)) -}}
-{{- end -}}
-{{- if or .cookTimeText .cookTime -}}
-  {{- $parts = $parts | append (printf "Cuisson %s" (or .cookTimeText .cookTime)) -}}
-{{- end -}}
-{{- if or .timeText .time -}}
-  {{- $parts = $parts | append (printf "Total %s" (or .timeText .time)) -}}
-{{- end -}}
-{{- if gt (len $parts) 0 -}}
+{{- $metadata := .metadata -}}
+{{- if or $metadata.servingsText $metadata.servings $metadata.prepTimeText $metadata.prepTime $metadata.cookTimeText $metadata.cookTime $metadata.timeText $metadata.time -}}
   <div class="meta-chips">
-    {{- range $parts -}}
-      <span class="meta-chip">{{ . }}</span>
-    {{- end -}}
+{{- if or $metadata.servingsText $metadata.servings -}}
+  {{- $display := printf "%v" (or $metadata.servingsText $metadata.servings) -}}
+  {{- $canonical := printf "%v" $metadata.servings -}}
+  {{- if eq $display $canonical -}}
+    {{- $display = printf "%s portions" $display -}}
+  {{- end -}}
+    <span class="meta-chip"{{ if .servingsControl }} data-servings-display aria-live="polite"{{ end }}>{{ $display }}</span>
+{{- end -}}
+{{- if or $metadata.prepTimeText $metadata.prepTime -}}
+    <span class="meta-chip">Prep {{ or $metadata.prepTimeText $metadata.prepTime }}</span>
+{{- end -}}
+{{- if or $metadata.cookTimeText $metadata.cookTime -}}
+    <span class="meta-chip">Cuisson {{ or $metadata.cookTimeText $metadata.cookTime }}</span>
+{{- end -}}
+{{- if or $metadata.timeText $metadata.time -}}
+    <span class="meta-chip">Total {{ or $metadata.timeText $metadata.time }}</span>
+{{- end -}}
   </div>
 {{- end -}}

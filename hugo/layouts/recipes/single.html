@@ -10,7 +10,17 @@
           <p class="eyebrow">Recette</p>
           <h2>{{ $recipe.title }}</h2>
           <p class="section-copy">Tous les éléments utiles de la recette sont regroupés ici pour cuisiner sans revenir en arrière.</p>
-          {{ partial "recipe-meta.html" $recipe.metadata }}
+          {{ partial "recipe-meta.html" (dict "metadata" $recipe.metadata "servingsControl" true) }}
+          {{ if $recipe.metadata.servings }}
+            <div class="servings-control" data-servings-control data-base-servings="{{ $recipe.metadata.servings }}" data-servings-text="{{ $recipe.metadata.servingsText }}">
+              <span id="servings-label">Portions</span>
+              <div class="servings-input-group" role="group" aria-labelledby="servings-label">
+                <button type="button" class="servings-button" data-servings-decrease aria-label="Réduire le nombre de portions">−</button>
+                <input id="servings-input" type="number" min="1" max="99" step="1" value="{{ $recipe.metadata.servings }}" inputmode="numeric" aria-labelledby="servings-label" data-servings-input>
+                <button type="button" class="servings-button" data-servings-increase aria-label="Augmenter le nombre de portions">+</button>
+              </div>
+            </div>
+          {{ end }}
         </div>
         <div class="header-actions">
           <a class="button-link button-link-ghost" href="{{ "" | relURL }}">Accueil</a>
@@ -35,7 +45,9 @@
               <li>
                 <label class="ingredient-item">
                   <input type="checkbox">
-                  <span>{{ .label }}</span>
+                  <span>
+                    <span>{{ .name }}</span>{{ with .quantityText }} <span data-ingredient-quantity data-base-quantity="{{ . }}">({{ . }})</span>{{ end }}
+                  </span>
                 </label>
               </li>
             {{ end }}
@@ -53,7 +65,17 @@
             {{ range .steps }}
               <li data-step-card>
                 <button class="step-button" type="button" aria-pressed="false">
-                  <div class="step-copy">{{ .text }}</div>
+                  <div class="step-copy">
+                    {{- range .parts -}}
+                      {{- if eq .type "ingredient" -}}
+                        <span>{{ .name }}</span>{{ with .quantityText }} <span data-ingredient-quantity data-base-quantity="{{ . }}">({{ . }})</span>{{ end }}
+                      {{- else if eq .type "quantity" -}}
+                        <span data-ingredient-quantity data-inline-quantity data-base-quantity="{{ .quantityText }}">{{ .quantityText }}</span>
+                      {{- else -}}
+                        {{ .value }}
+                      {{- end -}}
+                    {{- end -}}
+                  </div>
                   {{ if gt (len .timers) 0 }}
                     <div class="step-timers">
                       {{ range .timers }}

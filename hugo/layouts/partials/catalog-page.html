@@ -26,7 +26,7 @@
         <div>
           <h3><a href="{{ if $.IsHome }}{{ printf "recipes/%s/" .slug | relURL }}{{ else }}{{ printf "./%s/" .slug }}{{ end }}">{{ .title }}</a></h3>
         </div>
-        {{ partial "recipe-meta.html" .metadata }}
+        {{ partial "recipe-meta.html" (dict "metadata" .metadata) }}
       </article>
     {{ end }}
   </div>

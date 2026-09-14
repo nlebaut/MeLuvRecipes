@@ -153,6 +153,63 @@ function renderItem(item, context) {
   return "";
 }
 
+function buildStepPart(item, context, inlineQuantity = false) {
+  if (item.type === "ingredient") {
+    const ingredient = context.ingredients[item.index];
+
+    return {
+      type: "ingredient",
+      name: ingredient?.name ?? "",
+      quantityText: inlineQuantity ? "" : formatQuantity(ingredient?.quantity),
+    };
+  }
+
+  return { type: "text", value: renderItem(item, context) };
+}
+
+function buildTextParts(value) {
+  const parts = [];
+  let start = 0;
+  const quantities = /\b\d+(?:[.,]\d+)?(?:\s+\d+\s*\/\s*\d+|\s*\/\s*\d+)?\s*(?:kg|mg|g|ml|cl|dl|l|càs|càc|cás)\b/gi;
+
+  for (const match of value.matchAll(quantities)) {
+    const end = match.index + match[0].length;
+    if (/^\s+par personne\b/i.test(value.slice(end))) {
+      continue;
+    }
+
+    parts.push({ type: "text", value: value.slice(start, match.index) });
+    parts.push({ type: "quantity", quantityText: match[0] });
+    start = end;
+  }
+
+  parts.push({ type: "text", value: value.slice(start) });
+  return parts;
+}
+
+function buildStepParts(items, context) {
+  const parts = [];
+  let inlineQuantity = false;
+
+  for (const [index, item] of items.entries()) {
+    if (item.type === "text" && items[index + 1]?.type === "ingredient") {
+      const match = item.value.match(/(?<!\d)(\d+(?:[.,]\d+)?(?:\s+\d+\s*\/\s*\d+|\s*\/\s*\d+)?(?:(?:\s*[-–]\s*|\s+à\s+)\d+(?:[.,]\d+)?)?)(\s*(?:(?:g|kg|mg|ml|cl|dl|l|càs|càc|cás|cuillères?|verres?|pots?|bottes?|bouquets?|blocs?|feuilles?|gousses?|sachets?|tranches?|boîtes?|pincées?)\b\s*)?(?:(?:de|d['’])\s*)?)$/i);
+      if (match) {
+        parts.push(...buildTextParts(item.value.slice(0, match.index)));
+        parts.push({ type: "quantity", quantityText: match[1] });
+        parts.push({ type: "text", value: match[2] });
+        inlineQuantity = true;
+        continue;
+      }
+    }
+
+    parts.push(...(item.type === "text" ? buildTextParts(item.value) : [buildStepPart(item, context, inlineQuantity)]));
+    inlineQuantity = false;
+  }
+
+  return parts;
+}
+
 function buildStep(item, context) {
   const items = item?.value?.items ?? [];
   const text = items.map((entry) => renderItem(entry, context)).join("").replace(/\s+/g, " ").trim();
@@ -169,6 +226,7 @@ function buildStep(item, context) {
   return {
     number: item.value?.number ?? null,
     text,
+    parts: buildStepParts(items, context),
     timers,
   };
 }
@@ -262,6 +320,7 @@ async function main() {
       metadata,
       ingredients: (parsed.ingredients ?? []).map((ingredient) => ({
         ...ingredient,
+        quantityText: formatQuantity(ingredient.quantity),
         label: ingredientLabel(ingredient),
       })),
       timers: parsed.timers ?? [],
