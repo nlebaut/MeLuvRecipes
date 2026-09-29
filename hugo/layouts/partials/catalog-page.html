@@ -14,7 +14,17 @@
         <button class="alphabet-filter-button" type="button" data-alphabet-letter="{{ $letter }}" aria-pressed="false">{{ $letter }}</button>
       {{ end }}
     </nav>
-    <p class="catalog-status" data-catalog-status aria-live="polite">{{ $catalog.count }} recettes visibles</p>
+    <div class="catalog-status-row">
+      <p class="catalog-status" data-catalog-status aria-live="polite">{{ $catalog.count }} recettes trouvées</p>
+      <label class="duration-filter-label">Durée totale
+        <select class="duration-filter" data-catalog-duration>
+          <option value="">Toutes durées</option>
+          <option value="under20">Moins de 20 min</option>
+          <option value="20to40">20 à 40 min</option>
+          <option value="over40">Plus de 40 min</option>
+        </select>
+      </label>
+    </div>
   </div>
   <div class="recipe-list">
     {{ range $catalog.recipes }}
@@ -22,6 +32,8 @@
         class="recipe-row"
         data-recipe-card
         data-title="{{ .title }}"
+        data-prep-time="{{ .metadata.prepTime }}"
+        data-cook-time="{{ .metadata.cookTime }}"
       >
         <div>
           <h3><a href="{{ if $.IsHome }}{{ printf "recipes/%s/" .slug | relURL }}{{ else }}{{ printf "./%s/" .slug }}{{ end }}">{{ .title }}</a></h3>

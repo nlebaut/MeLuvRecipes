@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ "css/site.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "css/site.css" | relURL }}?v={{ readFile "static/css/site.css" | crypto.SHA256 }}">
   </head>
   <body>
     <a class="skip-link" href="#main-content">Aller au contenu</a>
@@ -35,9 +35,9 @@
         {{ block "main" . }}{{ end }}
       </main>
     </div>
-    <script type="module" src="{{ "js/search.js" | relURL }}"></script>
+    <script type="module" src="{{ "js/search.js" | relURL }}?v={{ readFile "static/js/search.js" | crypto.SHA256 }}"></script>
     {{ if or .IsHome (and .IsSection (eq .Section "recipes")) }}
-      <script type="module" src="{{ "js/catalog.js" | relURL }}"></script>
+      <script type="module" src="{{ "js/catalog.js" | relURL }}?v={{ readFile "static/js/catalog.js" | crypto.SHA256 }}"></script>
     {{ end }}
     {{ if and .IsPage (eq .Type "recipes") }}
       <script type="module" src="{{ "js/recipe.js" | relURL }}"></script>

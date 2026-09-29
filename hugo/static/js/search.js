@@ -1,3 +1,5 @@
+import { matchesDuration } from "./duration.js";
+
 const root = document.querySelector("[data-site-search]");
 const searchPage = document.querySelector("[data-search-page]");
 const searchIndexUrl = new URL("../search.json", import.meta.url);
@@ -26,11 +28,22 @@ const recipeUrl = (recipe) => {
   return new URL(path, siteRootUrl).pathname;
 };
 
-const searchUrl = (query) => {
+const searchUrl = (query, duration) => {
   const url = new URL("recherche/", siteRootUrl);
   url.searchParams.set("q", query);
+  if (duration) {
+    url.searchParams.set("duree", duration);
+  }
   return `${url.pathname}${url.search}`;
 };
+
+const durationSelect = (selected) => `<label class="duration-filter-label">Durée totale
+<select class="duration-filter">
+  <option value="">Toutes durées</option>
+  <option value="under20" ${selected === "under20" ? "selected" : ""}>Moins de 20 min</option>
+  <option value="20to40" ${selected === "20to40" ? "selected" : ""}>20 à 40 min</option>
+  <option value="over40" ${selected === "over40" ? "selected" : ""}>Plus de 40 min</option>
+</select></label>`;
 
 const renderRecipe = (recipe, index, asOption = false) => {
   const summary = recipe.description ?? recipe.summary ?? "";
@@ -98,6 +111,7 @@ if (root) {
   let recipes;
   let loading = false;
   let activeIndex = -1;
+  let duration = new URLSearchParams(window.location.search).get("duree") ?? "";
 
   results.id = "site-search-results";
   results.setAttribute("role", "listbox");
@@ -140,20 +154,14 @@ if (root) {
       return;
     }
 
-    if (matches.length === 0) {
-      results.innerHTML = `<p class="search-empty">Aucune recette trouvée pour "${escapeHtml(query)}".</p>`;
-      openResults();
-      return;
-    }
-
     const items = matches.slice(0, 8).map((recipe, index) => renderRecipe(recipe, index, true)).join("");
     const allResultsLink = matches.length > 8
-      ? `<a class="search-all-results" data-search-all-results href="${searchUrl(query)}">Voir les ${matches.length} résultats</a>`
+      ? `<a class="search-all-results" data-search-all-results href="${searchUrl(query, duration)}">Voir les ${matches.length} résultats</a>`
       : "";
 
-    results.innerHTML = `<p class="search-results-header">${matches.length} recette${matches.length > 1 ? "s" : ""} trouvée${matches.length > 1 ? "s" : ""}</p>${allResultsLink}${items}`;
+    results.innerHTML = `<p class="search-results-header"><span>${matches.length} recette${matches.length > 1 ? "s" : ""} trouvée${matches.length > 1 ? "s" : ""}</span>${durationSelect(duration)}</p>${allResultsLink}${matches.length ? items : `<p class="search-empty">Aucune recette trouvée pour "${escapeHtml(query)}".</p>`}`;
     openResults();
-    setActiveResult(0);
+    if (matches.length) setActiveResult(0);
   };
 
   const updateResults = () => {
@@ -170,7 +178,7 @@ if (root) {
       return;
     }
 
-    renderResults(findMatches(recipes, query), query);
+    renderResults(findMatches(recipes, query).filter((recipe) => matchesDuration(recipe.metadata?.prepTime, recipe.metadata?.cookTime, duration)), query);
   };
 
   const loadSearchIndex = () => {
@@ -192,6 +200,13 @@ if (root) {
   };
 
   input.addEventListener("input", updateResults);
+  results.addEventListener("change", (event) => {
+    if (event.target.matches(".duration-filter")) {
+      duration = event.target.value;
+      updateResults();
+      results.querySelector(".duration-filter").focus();
+    }
+  });
   input.addEventListener("keydown", (event) => {
     const items = [...results.querySelectorAll(".search-hit")];
 
@@ -239,6 +254,7 @@ if (root) {
 
 if (searchPage) {
   const query = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
+  const duration = new URLSearchParams(window.location.search).get("duree") ?? "";
   const status = searchPage.querySelector("[data-search-page-status]");
   const results = searchPage.querySelector("[data-search-page-results]");
 
@@ -252,7 +268,7 @@ if (searchPage) {
 
     loadRecipes()
       .then((recipes) => {
-        const matches = findMatches(recipes, query);
+        const matches = findMatches(recipes, query).filter((recipe) => matchesDuration(recipe.metadata?.prepTime, recipe.metadata?.cookTime, duration));
         status.textContent = `${matches.length} recette${matches.length > 1 ? "s" : ""} trouvée${matches.length > 1 ? "s" : ""} pour « ${query} »`;
         results.innerHTML = matches.length > 0
           ? matches.map((recipe, index) => renderRecipe(recipe, index)).join("")

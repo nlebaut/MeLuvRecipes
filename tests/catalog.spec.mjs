@@ -69,6 +69,32 @@ test("the catalog paginates recipes by 20", async ({ page }) => {
   await expect(cards.filter({ visible: true })).toHaveCount(20);
 });
 
+test("the catalog combines duration, letter, and pagination filters", async ({ page }) => {
+  await page.goto("/");
+
+  const duration = page.locator("[data-catalog-duration]");
+  const status = page.locator("[data-catalog-status]");
+  const visibleCards = page.locator("[data-recipe-card]:visible");
+  await expect(duration).toBeVisible();
+  await duration.selectOption("under20");
+  await expect(status).toHaveText("23 recettes trouvées");
+  await expect(visibleCards).toHaveCount(20);
+  await page.getByRole("button", { name: "Suivantes" }).click();
+  await expect(visibleCards).toHaveCount(3);
+
+  await page.getByRole("button", { name: "A", exact: true }).click();
+  await expect(status).toHaveText("0 recette trouvée");
+  await expect(page.locator("[data-catalog-empty]")).toBeVisible();
+
+  await duration.selectOption("20to40");
+  await expect(status).toHaveText("4 recettes trouvées");
+  await expect(visibleCards).toHaveCount(4);
+  await expect(page.getByRole("button", { name: "Aller à la page 1" })).toHaveAttribute("aria-current", "page");
+  await duration.selectOption("");
+  await page.getByRole("button", { name: "A", exact: true }).click();
+  await expect(status).toHaveText("170 recettes trouvées");
+});
+
 test("the search page shows every matching recipe", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error));

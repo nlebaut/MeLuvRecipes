@@ -1,3 +1,5 @@
+import { matchesDuration } from "./duration.js";
+
 const page = document.querySelector("[data-catalog-page]");
 
 if (page) {
@@ -5,6 +7,7 @@ if (page) {
   const letterButtons = [...page.querySelectorAll("[data-alphabet-letter]")];
   const emptyState = page.querySelector("[data-catalog-empty]");
   const status = page.querySelector("[data-catalog-status]");
+  const durationFilter = page.querySelector("[data-catalog-duration]");
   const previousButton = page.querySelector("[data-catalog-previous]");
   const nextButton = page.querySelector("[data-catalog-next]");
   const pageNumber = page.querySelector("[data-catalog-page-number]");
@@ -22,7 +25,8 @@ if (page) {
 
   const applyFilter = () => {
     const visibleCards = cards.filter((card) => {
-      return !activeLetter || firstLetter(card.dataset.title || "") === activeLetter;
+      return (!activeLetter || firstLetter(card.dataset.title || "") === activeLetter)
+        && matchesDuration(card.dataset.prepTime, card.dataset.cookTime, durationFilter.value);
     });
 
     const pageCount = Math.ceil(visibleCards.length / pageSize);
@@ -38,7 +42,7 @@ if (page) {
     });
 
     const count = visibleCards.length;
-    status.textContent = `${count} recette${count > 1 ? "s" : ""} visible${count > 1 ? "s" : ""}`;
+    status.textContent = `${count} recette${count > 1 ? "s" : ""} trouvée${count > 1 ? "s" : ""}`;
     emptyState.hidden = count !== 0;
     pagination.hidden = count === 0;
     previousButton.disabled = currentPage === 1;
@@ -67,6 +71,11 @@ if (page) {
       currentPage = 1;
       applyFilter();
     });
+  });
+
+  durationFilter.addEventListener("change", () => {
+    currentPage = 1;
+    applyFilter();
   });
 
   previousButton.addEventListener("click", () => {
