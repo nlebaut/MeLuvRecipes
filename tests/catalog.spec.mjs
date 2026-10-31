@@ -52,26 +52,39 @@ test("the catalog paginates recipes by 20", async ({ page }) => {
   const previousButton = page.getByRole("button", { name: "Précédentes" });
 
   await expect(cards.filter({ visible: true })).toHaveCount(20);
-  await expect(page.getByRole("button", { name: "Aller à la page 1" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("button", { name: "Aller à la page 1", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(previousButton).toBeDisabled();
 
   const firstPageTitles = await page.locator("[data-recipe-card]:visible").evaluateAll((elements) => elements.map((element) => element.dataset.title));
   await nextButton.click();
   await expect(cards.filter({ visible: true })).toHaveCount(20);
-  await expect(page.getByRole("button", { name: "Aller à la page 2" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("button", { name: "Aller à la page 2", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(previousButton).toBeEnabled();
   const secondPageTitles = await page.locator("[data-recipe-card]:visible").evaluateAll((elements) => elements.map((element) => element.dataset.title));
 
   expect(secondPageTitles).not.toEqual(firstPageTitles);
 
-  await page.getByRole("button", { name: "Aller à la page 7" }).click();
-  await expect(page.getByRole("button", { name: "Aller à la page 7" })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("button", { name: "Aller à la page 7", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Aller à la page 7", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(cards.filter({ visible: true })).toHaveCount(20);
 });
 
 test("the catalog combines duration, letter, and pagination filters", async ({ page }) => {
+  await page.route("**/js/catalog.js*", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, body: `
+      // Keep filter expectations independent of recipe additions and edits.
+      document.querySelectorAll("[data-recipe-card]").forEach((card, index) => {
+        card.dataset.title = index < 4 ? "A test recipe" : "B test recipe";
+        card.dataset.prepTime = index < 4 ? "20 min" : index < 27 ? "19 min" : "1 h";
+        card.dataset.cookTime = "0 min";
+      });
+      ${await response.text()}
+    ` });
+  });
   await page.goto("/");
 
+  const total = await page.locator("[data-recipe-card]").count();
   const duration = page.locator("[data-catalog-duration]");
   const status = page.locator("[data-catalog-status]");
   const visibleCards = page.locator("[data-recipe-card]:visible");
@@ -89,10 +102,10 @@ test("the catalog combines duration, letter, and pagination filters", async ({ p
   await duration.selectOption("20to40");
   await expect(status).toHaveText("4 recettes trouvées");
   await expect(visibleCards).toHaveCount(4);
-  await expect(page.getByRole("button", { name: "Aller à la page 1" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("button", { name: "Aller à la page 1", exact: true })).toHaveAttribute("aria-current", "page");
   await duration.selectOption("");
   await page.getByRole("button", { name: "A", exact: true }).click();
-  await expect(status).toHaveText("170 recettes trouvées");
+  await expect(status).toHaveText(`${total} recettes trouvées`);
 });
 
 test("the search page shows every matching recipe", async ({ page }) => {
